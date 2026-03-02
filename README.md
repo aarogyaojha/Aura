@@ -1,127 +1,117 @@
-# mySocialSpace
+# 🌟 Aura - Social Experience Reimagined
 
-**mySocialSpace** is a full-stack social networking application built with the MERN stack (MongoDB, Express.js, React.js, Node.js). It allows users to connect, share posts, and engage with a community in real-time.
+![Aura Logo](client/src/assets/aura_logo.png)
 
-## 🌟 Features
+**Aura** is a premium, full-stack social networking platform designed for modern interaction. Built with a robust MERN stack architecture, Aura combines elegant design with advanced security features like context-based authentication and automated content moderation.
 
-* **User Authentication**: Secure sign-up and login functionality.
-* **Profile Management**: Users can create and edit their profiles.
-* **Post Creation**: Ability to create, edit, and delete posts.
-* **Interactive Feed**: Real-time updates of posts from all users.
-* **Commenting System**: Users can comment on posts.
-* **Like Functionality**: Users can like and unlike posts.
-* **Responsive Design**: Optimized for both desktop and mobile devices.
+> [!IMPORTANT]
+> This project was formerly known as `mySocialSpace`. It has been rebranded to **Aura** with a complete UI overhaul and modern component architecture.
 
-## 🛠️ Technologies Used
+---
 
-* **Frontend**:
+## ✨ Features
 
-  * React.js
-  * Redux (for state management)
-  * React Router
-  * Axios (for API calls)
-  * Bootstrap / Material-UI (for styling)
+- 🎨 **Premium Aesthetics**: Gorgeous warm-toned UI built with Tailwind CSS and Shadcn/UI.
+- 🔐 **Context-Based Authentication**: Smart security that detects login patterns and protects your account.
+- 🛡️ **Automated Moderation**: Integrated `classifier_server` for real-time content safety.
+- 📱 **Fully Responsive**: Seamless experience across mobile, tablet, and desktop.
+- 💬 **Real-time Engagement**: Instant updates for posts, comments, and community interactions.
+- 👤 **Advanced Profiles**: Detailed user profiles with customizable avatars and activity tracking.
 
-* **Backend**:
+---
 
-  * Node.js
-  * Express.js
-  * MongoDB with Mongoose
-  * JWT (JSON Web Tokens) for authentication
-  * bcrypt.js (for password hashing)
+## 🛠️ Technology Stack
+
+| Layer | Technologies |
+| :--- | :--- |
+| **Frontend** | React, Redux Toolkit, Tailwind CSS, Shadcn/UI, Lucide Icons |
+| **Backend** | Node.js, Express.js, Passport.js, JWT, MongoDB |
+| **AI/Moderation**| Python, Flask/FastAPI (Classifier Server) |
+| **Dev Tools** | Vite, PostCSS, ESLint |
+
+---
 
 ## 📁 Project Structure
 
+```bash
+Aura/
+├── client/             # React + Vite frontend (Aura Client)
+│   ├── src/components  # UI components (Shared + Shadcn)
+│   ├── src/pages       # Route-level components
+│   └── src/redux       # State management
+├── server/             # Node.js + Express backend (Aura Server)
+│   ├── models/         # Database schemas
+│   ├── controllers/    # Business logic
+│   └── middlewares/    # Security & Validation
+├── classifier_server/  # Python-based moderation engine
+└── resources/          # Design assets & static files
 ```
-mySocialSpace/
-├── client/             # React frontend
-├── server/             # Express backend
-├── classifier_server/  # Additional server (e.g., for ML tasks)
-├── resources/          # Static assets and resources
-├── .gitignore
-├── LICENSE
-└── README.md
-```
+
+---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-* Node.js and npm installed
-* MongoDB installed and running
+- **Node.js** (v18+)
+- **MongoDB** (Local or Atlas)
+- **Python** (v3.9+ for classifier server)
 
 ### Installation
 
-1. **Clone the repository**:
-
+1. **Clone the repository**
    ```bash
    git clone https://github.com/aarogyaojha/mySocialSpace.git
    cd mySocialSpace
    ```
 
-
-
-2. **Install server dependencies**:
-
+2. **Setup Backend**
    ```bash
    cd server
    npm install
+   # Create .env and add:
+   # PORT=4000
+   # MONGODB_URI=your_db_uri
+   # JWT_SECRET=your_secret
    ```
 
-
-
-3. **Install client dependencies**:
-
+3. **Setup Frontend**
    ```bash
    cd ../client
    npm install
    ```
 
-
-
-4. **Set up environment variables**:
-
-   Create a `.env` file in the `server` directory with the following content:
-
-   ```env
-   MONGO_URI=your_mongodb_connection_string
-   JWT_SECRET=your_jwt_secret_key
-   ```
-
-
-
-5. **Run the application**:
-
-   In the `server` directory:
-
+4. **Setup Classifier** (Optional but recommended)
    ```bash
-   npm start
+   cd ../classifier_server
+   pip install -r requirements.txt
    ```
 
+### Running the App
 
-
-In the `client` directory:
-
-```bash
-npm start
-```
-
-
-
-The client will run on `http://localhost:3000` and the server on `http://localhost:5000`.
-
-## 🧪 Testing
-
-To run tests (if implemented), navigate to the respective directories and use:
-
-```bash
-npm test
-```
-
-
-
-## 📄 License
-
-This project is licensed under the MIT License. See the [LICENSE](https://github.com/aarogyaojha/mySocialSpace/blob/main/LICENSE) file for details.
+- **Server**: `npm start` (in `server/`)
+- **Client**: `npm run dev` (in `client/`)
+- **Classifier**: `python classifier_api.py` (in `classifier_server/`)
 
 ---
+
+## 📄 Documentation
+
+- [Frontend Documentation](client/README.md)
+- [Backend Documentation](server/README.md)
+- [Contributing Guidelines](CONTRIBUTING.md)
+- [License](LICENSE)
+
+---
+
+## � Contributing
+
+We welcome contributions! Please check our [Contributing Guide](CONTRIBUTING.md) for details on how to get started.
+
+---
+
+## ⚖️ License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+Developed with ❤️ by **Aarogya Ojha**
