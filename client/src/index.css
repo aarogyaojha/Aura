@@ -4,9 +4,73 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-  font-family: "Inter", sans-serif;
+@layer base {
+  :root {
+    --background: 48 100% 97%; /* #FFFBF1 */
+    --foreground: 0 0% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+    --primary: 0 68% 65%; /* #E36A6A */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 100% 85%; /* #FFB2B2 */
+    --secondary-foreground: 0 0% 10%;
+    --muted: 43 100% 91%; /* #FFF2D0 */
+    --muted-foreground: 0 0% 45%;
+    --accent: 43 100% 91%; /* #FFF2D0 */
+    --accent-foreground: 0 0% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 60 9.1% 97.8%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 0 68% 65%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.75rem;
+  }
+  .dark {
+    --background: 20 14.3% 4.1%;
+    --foreground: 60 9.1% 97.8%;
+    --card: 20 14.3% 4.1%;
+    --card-foreground: 60 9.1% 97.8%;
+    --popover: 20 14.3% 4.1%;
+    --popover-foreground: 60 9.1% 97.8%;
+    --primary: 60 9.1% 97.8%;
+    --primary-foreground: 24 9.8% 10%;
+    --secondary: 12 6.5% 15.1%;
+    --secondary-foreground: 60 9.1% 97.8%;
+    --muted: 12 6.5% 15.1%;
+    --muted-foreground: 24 5.4% 63.9%;
+    --accent: 12 6.5% 15.1%;
+    --accent-foreground: 60 9.1% 97.8%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 60 9.1% 97.8%;
+    --border: 12 6.5% 15.1%;
+    --input: 12 6.5% 15.1%;
+    --ring: 24 5.7% 82.9%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
 }
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Inter", sans-serif;
+  }
+}
+
+/* Original Project Styles */
 *::-webkit-scrollbar {
   width: 10px;
 }
@@ -16,13 +80,9 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background-image: linear-gradient(to bottom, #0070ff, #00d2ff, #0070ff);
+  background-image: linear-gradient(to bottom, #E36A6A, #FFB2B2, #E36A6A);
   border-radius: 10px;
   border: 2px solid #ffff;
-}
-
-body {
-  background-color: #f7fafc;
 }
 
 .tooltip {
@@ -34,7 +94,7 @@ body {
   visibility: hidden;
   max-width: max-content;
   height: auto;
-  background-color: #008cff;
+  background-color: theme('colors.primary.DEFAULT');
   color: #fff;
   text-align: center;
   border-radius: 6px;
@@ -64,7 +124,7 @@ body {
   border-width: 5px;
   border-style: solid;
   border-color: transparent;
-  border-top-color: #008cff;
+  border-top-color: theme('colors.primary.DEFAULT');
   transition: opacity 0.3s ease-in-out;
 }
 
@@ -87,16 +147,18 @@ body {
 .rightbar {
   @apply hidden md:block md:col-span-1 bg-white sticky top-20 h-[85vh] p-5 rounded-md border;
 }
+
 .loader {
   width: 20px;
   height: 20px;
-  border: 3px dotted #0ac9ff;
+  border: 3px dotted theme('colors.primary.DEFAULT');
   border-radius: 50%;
   display: inline-block;
   position: relative;
   box-sizing: border-box;
   animation: rotation 2s linear infinite;
 }
+
 .loader::after {
   content: "";
   box-sizing: border-box;
@@ -106,7 +168,7 @@ body {
   top: 0;
   bottom: 0;
   margin: auto;
-  border: 3px dotted #197fc7;
+  border: 3px dotted theme('colors.primary.300');
   width: 12px;
   height: 12px;
   border-radius: 50%;
@@ -115,27 +177,22 @@ body {
 }
 
 @keyframes rotation {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
+
 @keyframes rotationBack {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(-360deg);
-  }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-360deg); }
 }
+
 .admin-loader {
   width: 84px;
   height: 84px;
   position: relative;
   overflow: hidden;
 }
+
 .admin-loader:before,
 .admin-loader:after {
   content: "";
@@ -145,27 +202,18 @@ body {
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: #0ac9ff;
+  background: theme('colors.primary.DEFAULT');
   transform: translate(-50%, 100%) scale(0);
   animation: push 2s infinite ease-in;
 }
+
 .admin-loader:after {
   animation-delay: 1s;
 }
+
 @keyframes push {
-  0% {
-    transform: translate(-50%, 100%) scale(1);
-  }
-  15%,
-  25% {
-    transform: translate(-50%, 50%) scale(1);
-  }
-  50%,
-  75% {
-    transform: translate(-50%, -30%) scale(0.5);
-  }
-  80%,
-  100% {
-    transform: translate(-50%, -50%) scale(0);
-  }
+  0% { transform: translate(-50%, 100%) scale(1); }
+  15%, 25% { transform: translate(-50%, 50%) scale(1); }
+  50%, 75% { transform: translate(-50%, -30%) scale(0.5); }
+  80%, 100% { transform: translate(-50%, -50%) scale(0); }
 }

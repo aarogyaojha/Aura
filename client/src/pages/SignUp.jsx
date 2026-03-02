@@ -5,8 +5,13 @@ import { signUpAction, clearMessage } from "../redux/actions/authActions";
 import { Link } from "react-router-dom";
 import ContextAuthModal from "../components/modals/ContextAuthModal";
 import { RxCross1 } from "react-icons/rx";
+import { User, Mail, Lock, Upload, CheckCircle2, ShieldAlert } from "lucide-react";
 import ButtonLoadingSpinner from "../components/loader/ButtonLoadingSpinner";
-import Logo from "../assets/mySocialSpace.png";
+import Logo from "../assets/aura_logo.png";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 
 const SignUpNew = () => {
   const [loading, setLoading] = useState(false);
@@ -16,29 +21,23 @@ const SignUpNew = () => {
   const [password, setPassword] = useState("");
   const [avatar, setAvatar] = useState(null);
   const [avatarError, setAvatarError] = useState(null);
+  const [isConsentGiven, setIsConsentGiven] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModerator, setIsModerator] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const signUpError = useSelector((state) => state.auth?.signUpError);
 
-  const handleNameChange = (e) => {
-    setName(e.target.value);
-  };
+  const handleNameChange = (e) => setName(e.target.value);
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
-
-    if (e.target.value.includes("mod.mySocialSpace.com")) {
-      setIsModerator(true);
-    } else {
-      setIsModerator(false);
-    }
+    setIsModerator(e.target.value.includes("mod.aura.com"));
   };
 
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
+  const handlePasswordChange = (e) => setPassword(e.target.value);
 
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
@@ -47,11 +46,7 @@ const SignUpNew = () => {
       setAvatarError(null);
       return;
     }
-    if (
-      file.type !== "image/jpeg" &&
-      file.type !== "image/png" &&
-      file.type !== "image/jpg"
-    ) {
+    if (!file.type.match(/image\/(jpeg|png|jpg)/)) {
       setAvatar(null);
       setAvatarError("Please upload a valid image file (jpeg, jpg, png)");
     } else if (file.size > 10 * 1024 * 1024) {
@@ -62,10 +57,6 @@ const SignUpNew = () => {
       setAvatarError(null);
     }
   };
-
-  const [isConsentGiven, setIsConsentGiven] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isModerator, setIsModerator] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -80,9 +71,7 @@ const SignUpNew = () => {
     formData.append("isConsentGiven", isConsentGiven.toString());
 
     const timeout = setTimeout(() => {
-      setLoadingText(
-        "This is taking longer than usual. Please wait while backend services are getting started."
-      );
+      setLoadingText("This is taking longer than usual...");
     }, 5000);
 
     await dispatch(signUpAction(formData, navigate, isConsentGiven, email));
@@ -91,214 +80,128 @@ const SignUpNew = () => {
     clearTimeout(timeout);
   };
 
-  const handleClearError = () => {
-    dispatch(clearMessage());
-  };
+  const handleClearError = () => dispatch(clearMessage());
 
   return (
-    <section className="bg-white">
-      <div className="container mx-auto flex min-h-screen items-center justify-center px-6">
-        <form className="w-full max-w-md" onSubmit={handleSubmit}>
-          <div className="mx-auto flex justify-center">
-            <img className="h-7 w-auto sm:h-8" src={Logo} alt="" />
+    <section className="flex min-h-screen items-center justify-center bg-background p-6">
+      <Card className="w-full max-w-md shadow-xl border-none ring-1 ring-black/5">
+        <CardHeader className="space-y-4 flex flex-col items-center">
+          <div className="flex justify-center transition-transform hover:scale-105 duration-300">
+            <img className="h-20 w-auto sm:h-24" src={Logo} alt="Aura Logo" />
           </div>
-          {signUpError &&
-            Array.isArray(signUpError) &&
-            signUpError.map((err, i) => (
+          <div className="text-center space-y-1">
+            <CardTitle className="text-2xl font-bold tracking-tight text-primary">Create Account</CardTitle>
+            <CardDescription>Join Aura and start connecting</CardDescription>
+          </div>
+        </CardHeader>
+
+        <CardContent>
+          <form className="space-y-4" onSubmit={handleSubmit}>
+            {signUpError && Array.isArray(signUpError) && signUpError.map((err, i) => (
               <div
-                className="mt-6 flex items-center rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700"
+                className="flex items-center justify-between rounded-lg border border-destructive/20 bg-destructive/10 px-4 py-3 text-destructive text-sm"
                 role="alert"
                 key={i}
               >
-                <span className="ml-2 block sm:inline">{err}</span>
-                <button
-                  className="ml-auto font-bold text-red-700"
-                  onClick={handleClearError}
-                >
+                <span className="font-medium">{err}</span>
+                <button type="button" onClick={handleClearError}>
                   <RxCross1 className="h-3 w-3" />
                 </button>
               </div>
             ))}
 
-          <div className="mt-6 flex items-center justify-center">
-            <Link
-              to={"/signin"}
-              className="w-1/3 border-b border-gray-400 pb-4 text-center font-medium text-gray-800"
-            >
-              Sign In
-            </Link>
-            <Link
-              to={"/signup"}
-              className="text-cente w-1/3 border-b-2 border-blue-500 pb-4 font-medium text-gray-800"
-            >
-              Sign Up
-            </Link>
-          </div>
-          <div className="relative mt-8 flex items-center">
-            <span className="absolute">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="mx-3 h-6 w-6 text-gray-300"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                />
-              </svg>
-            </span>
-            <input
-              id="name"
-              name="name"
-              type="text"
-              value={name}
-              onChange={handleNameChange}
-              className="block w-full rounded-lg border bg-white px-11 py-3 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40"
-              placeholder="Username"
-              required
-              autoComplete="off"
-            />
-          </div>
-          <label
-            htmlFor="avatar"
-            className="mx-auto mt-6 flex cursor-pointer items-center rounded-lg border-2 border-dashed bg-white px-3 py-3 text-center"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 text-gray-300"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
-              />
-            </svg>
-            <h2 className="mx-3 text-gray-400">Profile Photo</h2>
-            <input
-              id="avatar"
-              type="file"
-              className="hidden"
-              name="avatar"
-              accept="image/*"
-              onChange={handleAvatarChange}
-              autoComplete="off"
-            />
-          </label>
-          {avatar && (
-            <div className="mt-2 flex items-center justify-center">
-              <span className="font-medium text-blue-500">{avatar.name}</span>
+            <div className="flex border-b border-muted">
+              <Link to="/signin" className="w-1/2 pb-4 text-center font-medium text-muted-foreground hover:text-foreground">
+                Sign In
+              </Link>
+              <Link to="/signup" className="w-1/2 pb-4 text-center font-semibold text-primary border-b-2 border-primary">
+                Sign Up
+              </Link>
             </div>
-          )}
-          {avatarError && (
-            <div className="mt-2 flex items-center justify-center">
-              <span className="text-red-500">{avatarError}</span>
+
+            <div className="space-y-4 pt-4">
+              <div className="relative group">
+                <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground group-focus-within:text-primary" />
+                <Input
+                  id="name"
+                  type="text"
+                  value={name}
+                  onChange={handleNameChange}
+                  className="pl-10 h-10"
+                  placeholder="Username"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="avatar" className="flex items-center justify-center gap-2 w-full h-12 border-2 border-dashed border-muted rounded-lg hover:border-primary hover:bg-primary/5 cursor-pointer transition-all">
+                  <Upload className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">Profile Photo</span>
+                  <input id="avatar" type="file" className="hidden" accept="image/*" onChange={handleAvatarChange} />
+                </Label>
+                {avatar && <p className="text-xs text-center text-green-600 font-medium">{avatar.name}</p>}
+                {avatarError && <p className="text-xs text-center text-destructive">{avatarError}</p>}
+              </div>
+
+              <div className="relative group">
+                <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground group-focus-within:text-primary" />
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={handleEmailChange}
+                  className="pl-10 h-10"
+                  placeholder="Email address"
+                  required
+                />
+              </div>
+
+              <div className="relative group">
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground group-focus-within:text-primary" />
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={handlePasswordChange}
+                  className="pl-10 h-10"
+                  placeholder="Password"
+                  required
+                />
+              </div>
             </div>
-          )}
 
-          <div className="relative mt-6 flex items-center">
-            <span className="absolute">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="mx-3 h-6 w-6 text-gray-300"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                />
-              </svg>
-            </span>
-            <input
-              id="email"
-              name="email"
-              value={email}
-              onChange={handleEmailChange}
-              type="email"
-              className="block w-full rounded-lg border bg-white px-11 py-3 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40"
-              placeholder="Email address"
-              required
-              autoComplete="off"
-            />
-          </div>
-          <div className="relative mt-4 flex items-center">
-            <span className="absolute">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="mx-3 h-6 w-6 text-gray-300"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                />
-              </svg>
-            </span>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              value={password}
-              onChange={handlePasswordChange}
-              className="block w-full rounded-lg border bg-white px-10 py-3 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40"
-              placeholder="Password"
-              required
-              autoComplete="off"
-            />
-          </div>
-          <div className="mt-6">
-            <button
-              disabled={loading}
-              type="submit"
-              className={`w-full transform rounded-lg bg-blue-500 px-6 py-3 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50 ${
-                loading ? "cursor-not-allowed opacity-50" : ""
-              }`}
+            <Button className="w-full mt-6 h-11 font-semibold" disabled={loading} type="submit">
+              {loading ? <ButtonLoadingSpinner loadingText={loadingText} /> : "Sign Up"}
+            </Button>
+
+            <div 
+              onClick={() => setIsModalOpen(true)}
+              className="mt-4 cursor-pointer"
             >
-              {loading ? (
-                <ButtonLoadingSpinner loadingText={loadingText} />
-              ) : (
-                <span>Sign Up</span>
-              )}
-            </button>
-
-            <div onClick={() => setIsModalOpen(true)} className="mt-6">
               {isConsentGiven && !isModerator ? (
-                <p className="mt-2 cursor-pointer rounded-lg border border-green-500 px-4 py-3 text-center text-sm font-semibold text-green-600">
-                  Context-Based Authentication is enabled
-                </p>
+                <div className="flex items-center justify-center gap-2 p-3 rounded-lg border border-green-500/30 bg-green-50 text-green-700 text-xs font-semibold">
+                  <CheckCircle2 className="h-4 w-4" />
+                  Context Authentication Enabled
+                </div>
               ) : (
-                <p className="mt-2 cursor-pointer rounded-lg border px-4 py-3 text-center text-sm font-semibold">
-                  Context-Based Authentication is disabled
-                </p>
+                <div className="flex items-center justify-center gap-2 p-3 rounded-lg border border-muted bg-muted/20 text-muted-foreground text-xs font-medium hover:bg-muted/40 transition-colors">
+                  <ShieldAlert className="h-4 w-4" />
+                  Context Authentication Disabled
+                </div>
               )}
             </div>
+          </form>
+        </CardContent>
 
-            <div>
-              <ContextAuthModal
-                isModalOpen={isModalOpen}
-                setIsModalOpen={setIsModalOpen}
-                setIsConsentGiven={setIsConsentGiven}
-                isModerator={isModerator}
-              />
-            </div>
-          </div>
-        </form>
-      </div>
+        <CardFooter>
+          <ContextAuthModal
+            isModalOpen={isModalOpen}
+            setIsModalOpen={setIsModalOpen}
+            setIsConsentGiven={setIsConsentGiven}
+            isModerator={isModerator}
+          />
+        </CardFooter>
+      </Card>
     </section>
   );
 };
