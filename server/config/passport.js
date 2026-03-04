@@ -7,7 +7,7 @@ const passport = require("passport");
 const opts = {};
 const jwt = require("jsonwebtoken");
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-opts.secretOrKey = process.env.SECRET;
+opts.secretOrKey = process.env.JWT_SECRET;
 
 passport.use(
   new JwtStrategy(opts, async function (jwt_payload, done) {
@@ -41,7 +41,7 @@ passport.use(
             _id: user._id,
             email: user.email,
           };
-          const newToken = jwt.sign(payloadNew, process.env.SECRET, {
+          const newToken = jwt.sign(payloadNew, process.env.JWT_SECRET, {
             expiresIn: "6h",
           });
 
