@@ -118,7 +118,7 @@ const signin = async (req, res) => {
       username: existingUser.username,
     };
 
-    const accessToken = jwt.sign(payload, process.env.SECRET, {
+    const accessToken = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: "6h",
     });
 
