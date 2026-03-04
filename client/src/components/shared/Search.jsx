@@ -89,7 +89,7 @@ const Search = () => {
           value={inputValue}
           onChange={handleInputChange}
           placeholder="Search for people, posts or communities"
-          className="h-10 py-1 bg-white border w-full md:w-[660px] rounded-full text-sm shadow-sm focus:outline-none focus:shadow-outline-blue focus:border-blue-500 transition duration-300 pl-3 pr-10"
+          className="h-10 py-1 bg-background text-foreground border border-border w-full md:w-[660px] rounded-full text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition duration-300 pl-3 pr-10"
           aria-label="Search"
           autoComplete="off"
         />
@@ -106,7 +106,7 @@ const Search = () => {
       {inputValue !== "" && (
         <div
           onBlur={() => !community && clearValues()}
-          className="absolute start-0 md:start-auto w-screen top-12 md:w-[660px] bg-white border rounded-md shadow-md"
+          className="absolute start-0 md:start-auto w-screen top-12 md:w-[660px] bg-card text-card-foreground border border-border rounded-md shadow-md z-50 overflow-hidden"
         >
           {loading && (
             <div className="flex items-center justify-center py-2 px-2">
@@ -117,13 +117,13 @@ const Search = () => {
           {posts.length > 0 && (
             <ul className="z-30">
               {posts.map((post) => (
-                <li key={post._id} className="border-b py-2 px-4">
+                <li key={post._id} className="border-b border-border py-2 px-4 hover:bg-accent/50">
                   <div
                     onClick={() => {
                       navigate(`/post/${post._id}`);
                       clearValues();
                     }}
-                    className="block text-sm text-gray-700 hover:text-blue-500 cursor-pointer"
+                    className="block text-sm text-foreground hover:text-primary cursor-pointer"
                   >
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
@@ -135,13 +135,13 @@ const Search = () => {
                         />
                       </div>
                       <div className="ml-3">
-                        <div className="font-medium text-gray-900">
+                        <div className="font-medium text-foreground">
                           {post.title}
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-sm text-muted-foreground">
                           {post.content}
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-sm text-muted-foreground">
                           Posted by {post.user.name} in {post.community.name}
                         </div>
                       </div>
@@ -154,13 +154,13 @@ const Search = () => {
           {users.length > 0 && (
             <ul className="z-30">
               {users.map((user) => (
-                <li key={user._id} className="border-b py-2 px-4">
+                <li key={user._id} className="border-b border-border py-2 px-4 hover:bg-accent/50">
                   <div
                     onClick={() => {
                       navigate(`/user/${user._id}`);
                       clearValues();
                     }}
-                    className="block text-sm text-gray-700 hover:text-indigo-500 cursor-pointer"
+                    className="block text-sm text-foreground hover:text-primary cursor-pointer"
                   >
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
@@ -171,10 +171,10 @@ const Search = () => {
                         />
                       </div>
                       <div className="ml-3">
-                        <div className="font-medium text-gray-900">
+                        <div className="font-medium text-foreground">
                           {user.name}
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-sm text-muted-foreground">
                           {user.email}
                         </div>
                       </div>
@@ -185,7 +185,7 @@ const Search = () => {
             </ul>
           )}
           {community && (
-            <div className="border-b py-2 px-4">
+            <div className="border-b border-border py-2 px-4 hover:bg-accent/50">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <img
@@ -233,7 +233,7 @@ const Search = () => {
                 navigate(`/community/${joinedCommunity.name}`);
                 clearValues();
               }}
-              className="block text-sm text-gray-700 hover:text-indigo-500 border-b py-2 px-4 cursor-pointer"
+              className="block text-sm text-foreground hover:bg-accent/50 border-b border-border py-2 px-4 cursor-pointer"
             >
               <div className="flex items-center">
                 <div className="flex-shrink-0">
@@ -247,7 +247,7 @@ const Search = () => {
                   <p className="font-semibold text-md text-primary">
                     {joinedCommunity.name}
                   </p>
-                  <p className="text-sm text-gray-600 line-clamp-2">
+                  <p className="text-sm text-muted-foreground line-clamp-2">
                     {joinedCommunity.description}
                   </p>
                 </div>
