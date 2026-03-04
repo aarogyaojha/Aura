@@ -67,16 +67,16 @@ const CommunityManagement = () => {
   return (
     <div className="flex gap-2 h-[85vh] w-full mt-3 border rounded-md">
       {/* Left column */}
-      <div className="flex flex-col w-full bg-white shadow-inner rounded-md border-r">
-        <h1 className="text-lg font-bold p-4 text-center border-b-2">
+      <div className="flex flex-col w-full bg-card text-card-foreground shadow-inner rounded-md border-r border-border">
+        <h1 className="text-lg font-bold p-4 text-center border-b-2 border-border">
           Communities
         </h1>
         <div className="flex flex-col overflow-y-auto">
           {communities.map((community) => (
             <div
               key={community._id}
-              className={`p-4 cursor-pointer hover:bg-background border-b flex items-center ${
-                selectedCommunity?._id === community._id ? "bg-gray-200" : ""
+              className={`p-4 cursor-pointer hover:bg-muted border-b border-border flex items-center ${
+                selectedCommunity?._id === community._id ? "bg-accent" : ""
               }`}
               onClick={() => handleCommunitySelect(community)}
             >
@@ -85,7 +85,7 @@ const CommunityManagement = () => {
                 alt={community.name}
                 className="w-10 h-10 rounded-full mr-2 md:mr-4"
               />
-              <span className="text-gray-700 text-xs md:text-base">
+              <span className="text-foreground text-xs md:text-base">
                 {community.name}
               </span>
             </div>
@@ -94,14 +94,14 @@ const CommunityManagement = () => {
       </div>
 
       {/* Right column */}
-      <div className="flex flex-col w-full bg-white rounded-md px-5 py-5 border-l">
+      <div className="flex flex-col w-full bg-card text-card-foreground rounded-md px-5 py-5 border-l border-border">
         {isChangingCommunity ? (
           <div className="flex justify-center items-center h-screen">
             <span className="admin-loader"></span>
           </div>
         ) : selectedCommunityData ? (
           <>
-            <h1 className="font-bold text-lg border-b border-black pb-1 mb-2">
+            <h1 className="font-bold text-lg border-b border-border pb-1 mb-2">
               {selectedCommunityData.name}
             </h1>
 
@@ -128,7 +128,7 @@ const CommunityManagement = () => {
                   {selectedCommunityData.moderators?.map((moderator) => (
                     <div
                       key={moderator._id}
-                      className={`p-2 cursor-pointer border flex flex-col md:flex-row gap-2 justify-between items-center rounded ${
+                      className={`p-2 cursor-pointer border border-border flex flex-col md:flex-row gap-2 justify-between items-center rounded ${
                         selectedModerator?._id === moderator._id ? "" : ""
                       }`}
                       onClick={() => handleModeratorSelect(moderator)}
@@ -153,7 +153,7 @@ const CommunityManagement = () => {
                 <h2 className="font-medium mb-2">Add Moderator</h2>
                 <div className="flex flex-col gap-2 md:flex-row">
                   <select
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                    className="bg-background border border-border text-foreground text-sm rounded focus:ring-primary focus:border-primary block w-full p-2.5"
                     value={newModerator}
                     onChange={(e) => setNewModerator(e.target.value)}
                   >
@@ -191,7 +191,7 @@ const CommunityManagement = () => {
           </>
         ) : (
           <div className="flex flex-col items-center justify-center h-full">
-            <span className="font-medium text-gray-400">
+            <span className="font-medium text-muted-foreground">
               Select a community to view details
             </span>
           </div>
