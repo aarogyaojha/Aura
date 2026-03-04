@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import DarkModeToggle from "../components/shared/DarkModeToggle";
 
 const SignUpNew = () => {
   const [loading, setLoading] = useState(false);
@@ -83,11 +84,14 @@ const SignUpNew = () => {
   const handleClearError = () => dispatch(clearMessage());
 
   return (
-    <section className="flex min-h-screen items-center justify-center bg-background p-6">
+    <section className="relative flex min-h-screen items-center justify-center bg-background p-6">
+      <div className="absolute top-4 right-4 z-50">
+        <DarkModeToggle />
+      </div>
       <Card className="w-full max-w-md shadow-xl border-none ring-1 ring-black/5">
         <CardHeader className="space-y-4 flex flex-col items-center">
           <div className="flex justify-center transition-transform hover:scale-105 duration-300">
-            <img className="h-20 w-auto sm:h-24" src={Logo} alt="Aura Logo" />
+            <img className="h-20 w-auto sm:h-24 dark:invert" src={Logo} alt="Aura Logo" />
           </div>
           <div className="text-center space-y-1">
             <CardTitle className="text-2xl font-bold tracking-tight text-primary">Create Account</CardTitle>
@@ -170,7 +174,7 @@ const SignUpNew = () => {
               </div>
             </div>
 
-            <Button className="w-full mt-6 h-11 font-semibold" disabled={loading} type="submit">
+            <Button className="w-full mt-6 h-11 font-semibold text-primary-foreground" disabled={loading} type="submit">
               {loading ? <ButtonLoadingSpinner loadingText={loadingText} /> : "Sign Up"}
             </Button>
 
