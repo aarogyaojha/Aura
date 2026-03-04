@@ -8,6 +8,14 @@ By participating in this project, you agree to abide by our Code of Conduct (be 
 
 ## 🚀 How to Contribute
 
+### 0. Getting Started (Cloning the Repo)
+To start contributing, you first need to get the code running on your local machine:
+1. Clone the repository: `git clone https://github.com/aarogyaojha/Aura.git`
+2. Navigate to the project directory: `cd Aura`
+3. Install frontend dependencies: `cd client && npm install`
+4. Install backend dependencies: `cd ../server && npm install`
+5. Refer to the main README to configure `.env` variables and start the servers.
+
 ### 1. Reporting Bugs
 - Use the GitHub Issue Tracker.
 - Describe the bug in detail and provide steps to reproduce.
