@@ -21,14 +21,14 @@ const Tab = ({ activeTab, handleTabClick }) => {
   };
 
   return (
-    <div className="border-b border-gray-200 sticky top-0 left-0 z-30 bg-white rounded-md">
-      <ul className="flex flex-wrap -mb-px text-sm font-medium text-center text-gray-500">
+    <div className="border-b border-border sticky top-0 left-0 z-30 bg-card text-card-foreground rounded-md">
+      <ul className="flex flex-wrap -mb-px text-sm font-medium text-center text-muted-foreground">
         <li className="mr-2 flex items-center">
           <span
             className={`cursor-pointer inline-flex items-center px-2 py-2 border-b-2 rounded-t-lg ${
               activeTab === "logs"
-                ? "border-blue-500 bg-primary rounded-md text-white"
-                : "border-transparent hover:text-gray-600 hover:border-gray-300"
+                ? "border-primary bg-primary rounded-md text-primary-foreground"
+                : "border-transparent hover:text-foreground hover:border-border"
             }`}
             onClick={() => handleTabClick("logs")}
           >
@@ -40,8 +40,8 @@ const Tab = ({ activeTab, handleTabClick }) => {
           <span
             className={`cursor-pointer inline-flex items-center px-2 py-2 border-b-2 rounded-t-lg ${
               activeTab === "settings"
-                ? "border-blue-500 bg-primary rounded-md text-white"
-                : "border-transparent hover:text-gray-600 hover:border-gray-300"
+                ? "border-primary bg-primary rounded-md text-primary-foreground"
+                : "border-transparent hover:text-foreground hover:border-border"
             }`}
             onClick={() => handleTabClick("settings")}
           >
@@ -53,8 +53,8 @@ const Tab = ({ activeTab, handleTabClick }) => {
           <span
             className={`cursor-pointer inline-flex items-center px-2 py-2 border-b-2 rounded-t-lg ${
               activeTab === "Community Management"
-                ? "border-blue-500 bg-primary rounded-md text-white"
-                : "border-transparent hover:text-gray-600 hover:border-gray-300"
+                ? "border-primary bg-primary rounded-md text-primary-foreground"
+                : "border-transparent hover:text-foreground hover:border-border"
             }`}
             onClick={() => handleTabClick("Community Management")}
           >
@@ -66,8 +66,8 @@ const Tab = ({ activeTab, handleTabClick }) => {
           <span
             className={`cursor-pointer inline-flex items-center px-2 py-2 border-b-2 rounded-t-md ${
               activeTab === "logout"
-                ? "border-blue-500 bg-primary rounded-md text-white"
-                : "border-transparent hover:text-red-600 hover:border-red-600"
+                ? "border-primary bg-primary rounded-md text-primary-foreground"
+                : "border-transparent hover:text-destructive hover:border-destructive"
             }`}
             onClick={handleLogout}
           >
@@ -75,8 +75,8 @@ const Tab = ({ activeTab, handleTabClick }) => {
             <span
               className={`${
                 activeTab === "logout"
-                  ? "group-hover:text-gray-500"
-                  : "group-hover:text-red-600"
+                  ? "group-hover:text-muted-foreground"
+                  : "group-hover:text-destructive"
               }`}
             >
               {loggingOut ? (
