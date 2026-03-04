@@ -1,206 +1,299 @@
 import { useEffect, useState } from "react";
-import { HiOutlineArchiveBox } from "react-icons/hi2";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, Link } from "react-router-dom";
-import { getCommunityAction } from "../../redux/actions/communityActions";
-import Save from "./Save";
-import Like from "./Like";
-import CommentForm from "../form/CommentForm";
-import { HiOutlineChatBubbleOvalLeft } from "react-icons/hi2";
-import DeleteModal from "../modals/DeleteModal";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { 
+  HiOutlineChatBubbleOvalLeft, 
+  HiOutlineArchiveBox,
+  HiOutlineEye,
+  HiOutlineBookmark,
+  HiBookmark
+} from "react-icons/hi2";
 import { IoIosArrowBack } from "react-icons/io";
-import CommonLoading from "../loader/CommonLoading";
-import "react-photo-view/dist/react-photo-view.css";
+import { Pin, ShieldAlert, Flag, Trash2, Share2 } from "lucide-react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
+
+import { getCommunityAction } from "../../redux/actions/communityActions";
+import { savePostAction, unsavePostAction } from "../../redux/actions/postActions";
+import CommentForm from "../form/CommentForm";
+import VoteButtons from "./VoteButtons";
+import ThreadedComment from "./ThreadedComment";
+import CommonLoading from "../loader/CommonLoading";
+import DeleteModal from "../modals/DeleteModal";
 import ReportPostModal from "../modals/ReportPostModal";
-import { VscReport } from "react-icons/vsc";
 import Tooltip from "../shared/Tooltip";
+import { cn } from "@/lib/utils";
 
-const PostView = ({ post, userData }) => {
+import "react-photo-view/dist/react-photo-view.css";
+
+const PostView = ({ post }) => {
   const [loading, setLoading] = useState(true);
-
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const userData = useSelector((state) => state.auth?.userData);
 
   const {
+    _id,
+    title,
     content,
     fileUrl,
     fileType,
     user,
     community,
-    dateTime,
-    comments,
-    savedByCount,
+    createdAt,
+    comments = [],
+    isPinned,
+    isNSFW,
+    isFlair,
+    views = 0,
+    isLocked,
     isReported,
+    savedBy = [],
   } = post;
 
+  const isSaved = savedBy.includes(userData?._id);
+
   useEffect(() => {
-    dispatch(getCommunityAction(community.name)).then(() => setLoading(false));
-  }, [dispatch, community.name, loading]);
+    if (community?.name) {
+      dispatch(getCommunityAction(community.name)).then(() => setLoading(false));
+    } else {
+      setLoading(false);
+    }
+  }, [dispatch, community?.name]);
 
-  const [showModal, setShowModal] = useState(false);
-  const toggleModal = (value) => {
-    setShowModal(value);
-  };
-
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [isReportedPost, setIsReportedPost] = useState(isReported);
 
-  const handleReportClick = () => {
-    setIsReportModalOpen(true);
-  };
-
-  const handleReportClose = () => {
-    setIsReportModalOpen(false);
+  const handleSave = () => {
+    if (isSaved) dispatch(unsavePostAction(_id));
+    else dispatch(savePostAction(_id));
   };
 
   if (loading) {
     return (
-      <div className="main-section flex justify-center items-center">
+      <div className="main-section flex justify-center items-center h-screen-20">
         <CommonLoading />
       </div>
     );
   }
 
   return (
-    <div className="main-section border p-5 bg-white rounded-lg shadow-md">
-      <p className="border border-dashed border-primary cursor-pointer px-2 py-2 w-7 h-7 flex justify-center items-center mb-3 rounded-full">
-        <IoIosArrowBack
-          className="text-primary text-lg font-semibold"
-          onClick={() => navigate(location.state?.from || "/")}
-        />
-      </p>
+    <div className="main-section flex flex-col md:flex-row bg-card border rounded-xl shadow-sm overflow-hidden mb-8">
+      {/* Side Voting Section */}
+      <div className="hidden md:flex flex-col items-center p-3 bg-muted/20 border-r w-14 pt-6">
+        <VoteButtons post={post} vertical={true} />
+      </div>
 
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center gap-2">
-          <img
-            className="rounded-full overflow-hidden w-12 h-12 object-cover"
-            src={user.avatar}
-            alt="user avatar"
-            loading="lazy"
-          />
+      {/* Main Content Area */}
+      <div className="flex-1 p-4 md:p-6">
+        {/* Navigation & Context */}
+        <div className="flex items-center gap-3 mb-6">
+          <button 
+            onClick={() => navigate(location.state?.from || "/")}
+            className="p-2 rounded-full hover:bg-muted transition-colors border text-muted-foreground"
+          >
+            <IoIosArrowBack size={20} />
+          </button>
+          
           <div className="flex flex-col">
-            {userData._id === user._id ? (
-              <Link to="/profile" className="text-lg font-semibold">
-                {user.name}
+            <div className="flex items-center gap-2">
+              <Link to={`/community/${community?.name}`} className="font-bold text-sm hover:underline">
+                r/{community?.name}
               </Link>
-            ) : (
-              <Link to={`/user/${user._id}`} className="text-lg font-semibold">
-                {user.name}
-              </Link>
-            )}
-            <Link
-              to={`/community/${community.name}`}
-              className="text-xs text-gray-500"
-            >
-              {community.name}
-            </Link>
+              <span className="text-muted-foreground text-xs">•</span>
+              <p className="text-xs text-muted-foreground">{createdAt}</p>
+            </div>
           </div>
         </div>
 
-        <span className="text-gray-500 text-sm self-center">{dateTime}</span>
-      </div>
+        {/* Post Header */}
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <img
+              className="rounded-full overflow-hidden w-10 h-10 object-cover border"
+              src={user?.avatar}
+              alt={user?.name}
+              loading="lazy"
+            />
+            <div className="flex flex-col">
+              <Link 
+                to={userData?._id === user?._id ? "/profile" : `/user/${user?._id}`}
+                className="font-bold hover:underline decoration-primary"
+              >
+                u/{user?.name}
+              </Link>
+              <div className="flex items-center gap-2">
+                {isPinned && (
+                  <span className="flex items-center gap-1 text-[10px] text-green-600 font-bold uppercase">
+                    <Pin size={10} className="fill-green-600" /> Pinned
+                  </span>
+                )}
+                {isNSFW && (
+                  <span className="text-[10px] text-destructive font-bold uppercase border border-destructive/30 px-1 rounded">
+                    NSFW
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-1">
+            <Tooltip text={isSaved ? "Unsave" : "Save"}>
+               <button 
+                onClick={handleSave}
+                className={cn(
+                  "p-2 rounded-full hover:bg-muted transition-colors",
+                  isSaved ? "text-primary" : "text-muted-foreground"
+                )}
+              >
+                {isSaved ? <HiBookmark size={22} /> : <HiOutlineBookmark size={22} />}
+              </button>
+            </Tooltip>
+          </div>
+        </div>
 
-      <div className="mb-4">
-        <p className="my-2">{content}</p>
-        <div className="flex justify-center">
-          {fileUrl && fileType === "image" ? (
-            <PhotoProvider
-              overlayRender={() => (
-                <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-10 text-white px-3 py-2">
-                  <p className="text-xs">{user.name}</p>
-                  <p className="text-xs">{community.name}</p>
-                  <p className="text-xs">{dateTime}</p>
-                </div>
-              )}
-            >
-              <PhotoView src={fileUrl}>
-                <div className="w-full aspect-w-1 aspect-h-1">
-                  <img
-                    src={fileUrl}
-                    alt={content}
-                    loading="lazy"
-                    className="cursor-pointer object-cover rounded-md"
-                  />
-                </div>
-              </PhotoView>
-            </PhotoProvider>
-          ) : (
-            fileUrl && (
-              <div className="w-full aspect-w-16 aspect-h-9">
+        {/* Post Title & Content */}
+        <div className="mb-6">
+          {title && <h1 className="text-2xl font-bold mb-4 leading-tight">{title}</h1>}
+          
+          {isFlair && (
+            <div className="inline-block bg-primary/10 text-primary text-xs uppercase font-bold px-3 py-1 rounded-full border border-primary/20 mb-4">
+              {isFlair}
+            </div>
+          )}
+
+          <div className="prose dark:prose-invert prose-lg max-w-none mb-6">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {content}
+            </ReactMarkdown>
+          </div>
+
+          {/* Media */}
+          {fileUrl && (
+            <div className="rounded-xl overflow-hidden border bg-muted/10 mb-6">
+              {fileType === "image" ? (
+                <PhotoProvider>
+                  <PhotoView src={fileUrl}>
+                    <img
+                      src={fileUrl}
+                      alt={title || content}
+                      className="w-full max-h-[70vh] object-contain bg-black/5 cursor-zoom-in"
+                    />
+                  </PhotoView>
+                </PhotoProvider>
+              ) : (
                 <video
-                  className="block mx-auto rounded-md focus:outline-none"
+                  className="w-full max-h-[70vh] bg-black/5 focus:outline-none"
                   src={fileUrl}
                   controls
                 />
-              </div>
-            )
-          )}
-        </div>
-      </div>
-
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center space-x-4">
-          <Like post={post} />
-          <button className="flex items-center space-x-1">
-            <HiOutlineChatBubbleOvalLeft className="text-2xl" />
-            <span className="text-lg">{comments.length}</span>
-          </button>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Save postId={post._id} />
-          <Tooltip text="Saved by" className="items-center">
-            <div className="flex items-center">
-              <HiOutlineArchiveBox className="text-2xl" />
-              {savedByCount}
+              )}
             </div>
-          </Tooltip>
-          {isReportedPost ? (
-            <Tooltip text="Reported" className="items-center">
-              <button disabled className="text-green-500">
-                <VscReport className="text-2xl" />
-              </button>
-            </Tooltip>
-          ) : (
-            <Tooltip text="Report">
-              <button onClick={handleReportClick}>
-                <VscReport className="text-2xl" />
-              </button>
-            </Tooltip>
           )}
-          {userData?._id === post.user._id && (
-            <Tooltip text="Delete">
-              <button
-                onClick={() => toggleModal(true)}
-                className="text-red-500"
+        </div>
+
+        {/* Post Footer / Actions */}
+        <div className="flex items-center justify-between py-4 border-y border-muted/50 mb-8">
+          <div className="flex items-center gap-2 md:gap-4">
+            <div className="md:hidden">
+              <VoteButtons post={post} />
+            </div>
+            
+            <div className="flex items-center gap-1 text-muted-foreground font-bold text-sm px-2 py-1.5 rounded hover:bg-muted transition-colors">
+              <HiOutlineChatBubbleOvalLeft size={20} />
+              <span>{comments.length} Comments</span>
+            </div>
+
+            <div className="flex items-center gap-1 text-muted-foreground text-sm px-2 py-1.5">
+              <HiOutlineEye size={20} />
+              <span>{views} Views</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <Tooltip text="Report post">
+              <button 
+                onClick={() => setIsReportModalOpen(true)}
+                className={cn(
+                  "p-2 rounded hover:bg-muted transition-colors",
+                  isReportedPost ? "text-orange-500" : "text-muted-foreground hover:text-orange-500"
+                )}
               >
-                <HiOutlineArchiveBox className="text-2xl" />
+                <Flag size={20} className={isReportedPost ? "fill-orange-500" : ""} />
               </button>
             </Tooltip>
-          )}
+
+            {userData?._id === user?._id && (
+              <Tooltip text="Delete post">
+                <button
+                  onClick={() => setShowDeleteModal(true)}
+                  className="p-2 rounded hover:bg-destructive/10 text-destructive transition-colors"
+                >
+                  <Trash2 size={20} />
+                </button>
+              </Tooltip>
+            )}
+            
+            <button className="p-2 rounded hover:bg-muted text-muted-foreground transition-colors">
+              <Share2 size={20} />
+            </button>
+          </div>
+        </div>
+
+        {/* Discussion Section */}
+        <div className="mt-8">
+          <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+            Discussions
+            <span className="text-xs font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+              {comments.length}
+            </span>
+          </h2>
+          
+          <div className="mb-10">
+            <CommentForm communityId={community?._id} postId={_id} />
+          </div>
+
+          <div className="space-y-4">
+            {comments && comments.length > 0 ? (
+              comments.map((comment) => (
+                <ThreadedComment 
+                  key={comment._id} 
+                  comment={comment} 
+                  communityId={community?._id} 
+                  postId={_id} 
+                />
+              ))
+            ) : (
+              <div className="text-center py-16 bg-muted/10 rounded-2xl border-2 border-dashed border-muted/30">
+                <p className="text-muted-foreground font-medium italic">No comments yet. Start the conversation!</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Delete Modal */}
-      <DeleteModal
-        showModal={showModal}
-        postId={post._id}
-        onClose={() => toggleModal(false)}
-        prevPath={location.state.from || "/"}
-      />
+      {/* Modals */}
+      {showDeleteModal && (
+        <DeleteModal
+          showModal={showDeleteModal}
+          postId={_id}
+          onClose={() => setShowDeleteModal(false)}
+          prevPath={location.state?.from || "/"}
+        />
+      )}
 
-      <ReportPostModal
-        isOpen={isReportModalOpen}
-        onClose={handleReportClose}
-        postId={post._id}
-        communityId={community._id}
-        setReportedPost={setIsReportedPost}
-      />
-
-      <div>
-        <CommentForm communityId={community._id} postId={post._id} />
-      </div>
+      {isReportModalOpen && (
+        <ReportPostModal
+          isOpen={isReportModalOpen}
+          onClose={() => setIsReportModalOpen(false)}
+          postId={_id}
+          communityId={community?._id}
+          setReportedPost={setIsReportedPost}
+        />
+      )}
     </div>
   );
 };
