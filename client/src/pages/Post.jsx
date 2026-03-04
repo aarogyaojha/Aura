@@ -49,7 +49,6 @@ const Post = () => {
   return (
     <Suspense fallback={<FallbackLoading />}>
       <PostView post={post} userData={userData} />
-      <CommentSidebar comments={post.comments} />
     </Suspense>
   );
 };

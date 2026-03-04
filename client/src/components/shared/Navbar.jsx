@@ -1,6 +1,6 @@
 import { useState, memo } from "react";
-import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import Search from "./Search";
 import { logoutAction } from "../../redux/actions/authActions";
 import { LogOut, Menu, X, User as UserIcon, Mail } from "lucide-react";
@@ -15,15 +15,20 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import NotificationMenu from "./NotificationMenu";
+import DarkModeToggle from "./DarkModeToggle";
 
-const Navbar = ({ userData, toggleLeftbar, showLeftbar }) => {
+const Navbar = ({ userData, showLeftbar, toggleLeftbar }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [loggingOut, setLoggingOut] = useState(false);
 
   const logout = async () => {
     setLoggingOut(true);
     await dispatch(logoutAction());
     setLoggingOut(false);
+    navigate("/signin");
   };
 
   return (
@@ -41,7 +46,7 @@ const Navbar = ({ userData, toggleLeftbar, showLeftbar }) => {
           </Button>
           
           <Link to="/" className="hidden md:flex items-center space-x-2 transition-transform hover:scale-105 duration-200">
-            <img className="w-32 lg:w-40" src={Logo} alt="Aura" />
+            <img className="h-9 w-auto" src={Logo} alt="Aura" />
           </Link>
         </div>
 
@@ -52,6 +57,8 @@ const Navbar = ({ userData, toggleLeftbar, showLeftbar }) => {
 
         {/* User Specific Actions */}
         <div className="flex items-center gap-2">
+          <NotificationMenu />
+          <DarkModeToggle />
           <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-10 w-10 rounded-full ring-offset-background transition-all hover:ring-2 hover:ring-primary/20 focus-visible:ring-2 focus-visible:ring-primary">

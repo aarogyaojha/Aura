@@ -7,6 +7,7 @@ import App from "./App";
 import { getTitleFromRoute } from "./utils/docTitle";
 import { Helmet } from "react-helmet";
 import { useLocation } from "react-router-dom";
+import { SocketProvider } from "./context/SocketContext";
 
 const ErrorComponent = ({ errorMessage }) => (
   <div className="text-red-500 font-bold text-center">{errorMessage}</div>
@@ -60,10 +61,12 @@ const AppContainer = () => {
 
   return (
     <Provider store={store}>
-      <Helmet>
-        <title>{getTitleFromRoute(location.pathname)}</title>
-      </Helmet>
-      <App />
+      <SocketProvider>
+        <Helmet>
+          <title>{getTitleFromRoute(location.pathname)}</title>
+        </Helmet>
+        <App />
+      </SocketProvider>
     </Provider>
   );
 };

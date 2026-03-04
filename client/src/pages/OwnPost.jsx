@@ -42,10 +42,7 @@ const OwnPost = () => {
     );
 
   return (
-    <>
-      <PostView post={post} userData={userData} />
-      <CommentSidebar comments={post.comments} />
-    </>
+    <PostView post={post} userData={userData} title="Own Post" />
   );
 };
 

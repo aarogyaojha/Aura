@@ -1,4 +1,4 @@
-import { useMemo, useEffect, memo } from "react";
+import { useMemo, useEffect, memo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { getJoinedCommunitiesAction } from "../../redux/actions/communityActions";
@@ -10,9 +10,12 @@ import {
 } from "react-icons/hi2";
 import { HiOutlineUserGroup } from "react-icons/hi2";
 import { GiTeamIdea } from "react-icons/gi";
+import { Plus } from "lucide-react";
+import CreateCommunityModal from "../modals/CreateCommunityModal";
 
 const Leftbar = ({ showLeftbar }) => {
   const dispatch = useDispatch();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const user = useSelector((state) => state.auth?.userData);
   const joinedCommunities = useSelector(
@@ -80,16 +83,26 @@ const Leftbar = ({ showLeftbar }) => {
                   Communities
                 </div>
 
-                <Link
-                  className="flex relative items-center text-sm font-medium text-primary mr-4"
-                  to="/my-communities"
-                >
-                  See all
-                  <p className="absolute -top-2 -right-4 text-white text-xs bg-primary w-4 h-4 rounded-full flex justify-center items-center">
-                    {" "}
-                    {joinedCommunities.length}
-                  </p>
-                </Link>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="p-1.5 hover:bg-primary/10 rounded-full text-primary transition-colors"
+                    title="Create Community"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </button>
+
+                  <Link
+                    className="flex relative items-center text-sm font-medium text-primary mr-4"
+                    to="/my-communities"
+                  >
+                    See all
+                    <p className="absolute -top-2 -right-4 text-white text-xs bg-primary w-4 h-4 rounded-full flex justify-center items-center">
+                      {" "}
+                      {joinedCommunities?.length || 0}
+                    </p>
+                  </Link>
+                </div>
               </div>
               <ul className="w-full mt-3">
                 {communityLinks.map((communityLink) => (
@@ -105,7 +118,22 @@ const Leftbar = ({ showLeftbar }) => {
               </ul>
             </div>
           ) : (
-            <div>No communities found.</div>
+            <div className="w-full">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex gap-1 font-medium items-center">
+                  <HiOutlineUserGroup className="text-xl" />
+                  Communities
+                </div>
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+                >
+                  <Plus className="h-3 w-3" />
+                  Create One
+                </button>
+              </div>
+              <p className="text-xs text-muted-foreground italic">You haven't joined any communities yet.</p>
+            </div>
           )}
           {user && user.role === "general" && (
             <div className="md:hidden">
@@ -120,6 +148,10 @@ const Leftbar = ({ showLeftbar }) => {
           )}
         </div>
       </div>
+      <CreateCommunityModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 };

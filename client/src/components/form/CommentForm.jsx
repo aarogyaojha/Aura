@@ -9,7 +9,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import InappropriatePost from "../modals/InappropriatePostModal";
 
-const CommentForm = ({ communityId, postId }) => {
+const CommentForm = ({ communityId, postId, parentId = null, onSuccess, placeholder = "Write a comment...", isReply = false }) => {
   const dispatch = useDispatch();
   const [showInappropriateContentModal, setShowInappropriateContentModal] =
     useState(false);
@@ -23,6 +23,7 @@ const CommentForm = ({ communityId, postId }) => {
     const newComment = {
       content,
       postId,
+      parentId, // Pass the parent ID if it's a reply
     };
     try {
       setIsLoading(true);
@@ -32,6 +33,8 @@ const CommentForm = ({ communityId, postId }) => {
 
       setIsLoading(false);
       setContent("");
+
+      if (onSuccess) onSuccess(); // Notify parent component
 
       await dispatch(getComPostsAction(communityId));
     } finally {
@@ -50,7 +53,7 @@ const CommentForm = ({ communityId, postId }) => {
   }, [isCommentInappropriate]);
 
   return (
-    <div>
+    <div className={`w-full ${isReply ? "mb-2" : "mt-4"}`}>
       <InappropriatePost
         closeInappropriateContentModal={() => {
           setShowInappropriateContentModal(false);
@@ -60,29 +63,35 @@ const CommentForm = ({ communityId, postId }) => {
         contentType={"comment"}
       />
 
-      <form onSubmit={handleSubmit}>
-        <div className="my-4">
+      <form onSubmit={handleSubmit} className="flex flex-col">
+        <div className="relative">
           <textarea
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500 resize-none"
+            autoFocus={isReply}
+            className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none transition-all ${
+              isReply ? "text-sm min-h-[80px]" : "min-h-[100px]"
+            }`}
             name="content"
             value={content}
             onChange={(e) => setContent(e.target.value)}
             maxLength={500}
             required
-            placeholder="Write a comment..."
+            placeholder={placeholder}
           />
         </div>
-        <div className="flex justify-end">
+        <div className="flex justify-end mt-2">
           <button
-            className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+            className={`px-5 py-2 text-sm font-bold text-white bg-primary rounded-lg hover:bg-blue-600 transition-all flex items-center justify-center gap-2 ${
+              isLoading ? "opacity-70 cursor-not-allowed" : "shadow-sm hover:shadow-md cursor-pointer"
+            }`}
             type="submit"
             disabled={isLoading}
-            style={{
-              opacity: isLoading ? 0.5 : 1,
-              cursor: isLoading ? "not-allowed" : "pointer",
-            }}
           >
-            {isLoading ? "Loading..." : "Comment"}
+            {isLoading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Posting...
+              </>
+            ) : isReply ? "Reply" : "Post Comment"}
           </button>
         </div>
       </form>

@@ -6,7 +6,7 @@ import {
 } from "../../redux/actions/userActions";
 import { useDispatch } from "react-redux";
 import ButtonLoadingSpinner from "../loader/ButtonLoadingSpinner";
-import { FiUser, FiMapPin, FiEdit } from "react-icons/fi";
+import { FiUser, FiMapPin, FiEdit, FiCamera, FiEdit2 } from "react-icons/fi";
 
 const suggestedInterests = [
   "🎨 Art",
@@ -35,26 +35,42 @@ const ProfileUpdateModal = ({ user, isOpen, onClose }) => {
   const dispatch = useDispatch();
 
   const [isUpdating, setIsUpdating] = useState(false);
+  const [avatar, setAvatar] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(user.avatar);
+  const [name, setName] = useState(user.name ? user.name : "");
   const [bio, setBio] = useState(user.bio ? user.bio : "");
   const [location, setLocation] = useState(user.location ? user.location : "");
   const [interests, setInterests] = useState(
     user.interests ? user.interests : ""
   );
 
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setAvatar(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatarPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleUpdateProfile = async () => {
     setIsUpdating(true);
 
-    const formData = {
-      bio,
-      location,
-      interests,
-    };
+    const formData = new FormData();
+    if (avatar) {
+      formData.append("avatar", avatar);
+    }
+    formData.append("name", name);
+    formData.append("bio", bio);
+    formData.append("location", location);
+    formData.append("interests", interests);
 
     await dispatch(updateUserAction(user._id, formData));
     await dispatch(getUserAction(user._id));
-    setBio("");
-    setLocation("");
-    setInterests("");
+    
     setIsUpdating(false);
     onClose();
   };
@@ -101,6 +117,60 @@ const ProfileUpdateModal = ({ user, isOpen, onClose }) => {
                     Update Profile
                   </Dialog.Title>
 
+                  <div className="mt-6 flex flex-col items-center justify-center space-y-4">
+                    <div className="relative group cursor-pointer" onClick={() => document.getElementById("avatar-upload").click()}>
+                      <img
+                        src={avatarPreview}
+                        alt="Profile Preview"
+                        className="h-28 w-28 rounded-full object-cover border-4 border-primary/10 shadow-lg transition-all group-hover:brightness-75"
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <FiCamera className="text-white text-3xl" />
+                      </div>
+                      <input
+                        id="avatar-upload"
+                        type="file"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={handleAvatarChange}
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground font-medium">Click to change profile picture</p>
+                  </div>
+
+                  <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <div className="flex items-center space-x-2">
+                        <FiEdit2 className="text-gray-600" />
+                        <label className="block text-sm font-medium text-gray-700">
+                          Full Name
+                        </label>
+                      </div>
+                      <input
+                        type="text"
+                        className="mt-1 block w-full rounded-md border-b border-gray-300 p-2 outline-none focus:border-primary transition-colors"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                      />
+                    </div>
+
+                    <div>
+                      <div className="flex items-center space-x-2">
+                        <FiMapPin className="text-gray-600" />
+                        <label className="block text-sm font-medium text-gray-700">
+                          Location
+                        </label>
+                      </div>
+                      <input
+                        type="text"
+                        placeholder="e.g. Kathmandu, Nepal"
+                        className="mt-1 block w-full rounded-md border-b border-gray-300 p-2 outline-none focus:border-primary transition-colors"
+                        value={location}
+                        onChange={(e) => setLocation(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
                   <div className="mt-4">
                     <div className="flex items-center space-x-2">
                       <FiUser className="text-gray-600" />
@@ -110,7 +180,8 @@ const ProfileUpdateModal = ({ user, isOpen, onClose }) => {
                     </div>
                     <input
                       type="text"
-                      className="mt-1 block w-full rounded-md border-b border-gray-300 p-2 outline-none"
+                      placeholder="Tell us about yourself..."
+                      className="mt-1 block w-full rounded-md border-b border-gray-300 p-2 outline-none focus:border-primary transition-colors"
                       value={bio}
                       onChange={(e) => setBio(e.target.value)}
                     />
