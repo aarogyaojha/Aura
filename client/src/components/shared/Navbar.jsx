@@ -46,7 +46,7 @@ const Navbar = ({ userData, showLeftbar, toggleLeftbar }) => {
           </Button>
           
           <Link to="/" className="hidden md:flex items-center space-x-2 transition-transform hover:scale-105 duration-200">
-            <img className="h-9 w-auto" src={Logo} alt="Aura" />
+            <img className="h-9 w-auto dark:invert" src={Logo} alt="Aura" />
           </Link>
         </div>
 
