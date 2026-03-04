@@ -1,59 +1,49 @@
-# 🎨 Aura Frontend Documentation
+# 🎨 Aura Client — Frontend Documentation
 
-The Aura frontend is a modern, high-performance web application built with **React**, **Vite**, and **Redux Toolkit**. It utilizes **Shadcn/UI** for its design system and **Tailwind CSS** for styling.
+The Aura frontend is a premium, high-performance social media interface built with **React 18**, **Vite**, and **Redux Toolkit**. It focuses on a "Reddit-like" user experience with a modern, responsive design.
 
-## 🏗️ Architecture
+## 🏗️ Technical Architecture
 
-- **State Management**: Redux Toolkit for global state (Auth, Posts, Admin).
-- **Styling**: Tailwind CSS with a custom design system defined in `tailwind.config.js` and `index.css`.
-- **Components**: 
-  - `src/components/ui/`: Atomic Shadcn/UI components.
-  - `src/components/shared/`: Layout components like Navbar, Footer, and Search.
-  - `src/components/[feature]/`: Feature-specific components (Post, Profile, Community).
-- **Routing**: `react-router-dom` for client-side navigation.
+- **Framwork**: React 18 (Functional Components + Hooks)
+- **State Management**: Redux Toolkit (Slices & Thunks) for global post, comment, and auth states.
+- **Real-time Engine**: Socket.io-client for live notifications and vote synchronization.
+- **Styling**: Tailwind CSS with custom HSL theme variables for Dark/Light mode.
+- **Components**: Atomic design approach using Radix UI primitives and Lucide icons.
 
-## 🌈 Design System
+## 📂 Project Organization
 
-Aura uses a warm and premium color palette.
+- `src/components/post`: Core post rendering logic, voting buttons, and markdown support.
+- `src/components/profile`: Profile cards, karma displays, and update forms.
+- `src/components/community`: Community feeds, sidebars, and join logic.
+- `src/redux/slices`: Redux logic for decoupled state management.
+- `src/assets`: Image assets including the Aura logo and brand colors.
 
-| Token | Color | Hex |
+## 🗳️ State Management Strategy
+
+Aura uses a sophisticated Redux state to handle complex interactions:
+1. **Optimistic UI**: Voting and saving actions update the Redux state immediately before the API response for an "instant" feel.
+2. **Recursive Reducers**: The post reducer handles deeply nested threaded comments by normalizing child arrays.
+3. **Persisted Theme**: UI theme (Dark/Light) is managed in a separate slice and synced with `localStorage`.
+
+## 🌈 Design System: "Sleek & Premium"
+
+Aura uses a custom design system defined in `tailwind.config.js`.
+
+| Category | Token | Variable |
 | :--- | :--- | :--- |
-| Background | Cream | `#FFFBF1` |
-| Primary | Rose Red| `#E36A6A` |
-| Secondary | Soft Pink| `#FFB2B2` |
-| Accent | Beige | `#FFF2D0` |
+| **Colors** | Primary | `--primary` (Orange-Red) |
+| **Typography** | Font | Inter / System Sans |
+| **Radius** | Rounded | `12px` (Card), `50%` (Avatar) |
 
-### Using Components
-
-Most UI elements are built using Shadcn/UI. Example usage:
-
-```jsx
-import { Button } from "@/components/ui/button";
-
-export const MyComponent = () => (
-  <Button variant="default">Click Me</Button>
-);
-```
-
-## 🚀 Development
+## 🚀 Development Workflow
 
 ### Scripts
+- `npm run dev`: Start Vite development server.
+- `npm run build`: Production bundle optimized for speed.
+- `npm run lint`: ESLint check for code quality.
 
-- `npm run dev`: Starts the Vite development server.
-- `npm run build`: Compiles the application for production.
-- `npm run preview`: Locally previews the production build.
-
-### Environment Variables
-
-Ensure the `proxy` field in `package.json` or `vite.config.js` points to your backend server (default: `http://127.0.0.1:4000`).
-
-## 📁 Key Directories
-
-- `src/assets/`: Images, logos, and global static files.
-- `src/hooks/`: Custom React hooks for shared logic.
-- `src/pages/`: Main page components mapping to routes.
-- `src/redux/`: Redux slices, actions, and store configuration.
-- `src/utils/`: Formatting, constants, and helper functions.
+### Environment
+Ensure `VITE_API_URL` is set in your client `.env` to point to the backend server.
 
 ---
 

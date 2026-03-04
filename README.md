@@ -1,22 +1,33 @@
-# 🌟 Aura - Social Experience Reimagined
+# 🌟 Aura — Social Experience Reimagined
 
-![Aura Logo](client/src/assets/aura_logo.png)
+[![CI/CD](https://github.com/aarogyaojha/mySocialSpace/actions/workflows/ci.yml/badge.svg)](https://github.com/aarogyaojha/mySocialSpace/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
-**Aura** is a premium, full-stack social networking platform designed for modern interaction. Built with a robust MERN stack architecture, Aura combines elegant design with advanced security features like context-based authentication and automated content moderation.
+**Aura** is a premium, full-stack social networking platform designed for high-end engagement. Inspired by Reddit, it features a robust MERN architecture, real-time interactions, and a "WOW" UI/UX with dark mode and nested discussions.
 
 > [!IMPORTANT]
-> This project was formerly known as `mySocialSpace`. It has been rebranded to **Aura** with a complete UI overhaul and modern component architecture.
+> This project was formerly known as `mySocialSpace`. It has been rebranded to **Aura** with a full technical overhaul, Reddit-style features, and a premium modern aesthetic.
 
 ---
 
-## ✨ Features
+## ✨ Key Features
 
-- 🎨 **Premium Aesthetics**: Gorgeous warm-toned UI built with Tailwind CSS and Shadcn/UI.
-- 🔐 **Context-Based Authentication**: Smart security that detects login patterns and protects your account.
-- 🛡️ **Automated Moderation**: Integrated `classifier_server` for real-time content safety.
-- 📱 **Fully Responsive**: Seamless experience across mobile, tablet, and desktop.
-- 💬 **Real-time Engagement**: Instant updates for posts, comments, and community interactions.
-- 👤 **Advanced Profiles**: Detailed user profiles with customizable avatars and activity tracking.
+### 🗳️ Reddit-Style Engagement
+- **Advanced Voting**: Upvote/downvote system with optimistic UI and color-coded score tracking.
+- **Threaded Discussions**: Infinite recursive comment nesting with visual thread lines and collapsible branches.
+- **Smart Sorting**: Home and Community feeds with **Hot**, **New**, **Top**, and **Rising** algorithms.
+
+### 🎨 Premium UI/UX
+- **🌓 Dark Mode**: Persistent theme support with smooth transitions and system preference detection.
+- **� Markdown Support**: Full GFM (GitHub Flavored Markdown) rendering for posts and comments.
+- **⚡ Shimmer Skeletons**: Content-aware loading states for a seamless perception of speed.
+- **🏷️ Badges & Metadata**: NSFW, Pinned, and Locked status indicators with community flairs.
+
+### 🛡️ Security & Scalability
+- **🔐 Context-Aware Auth**: Smart login verification based on IP, Location, and Device metadata.
+- **🤖 AI Moderation**: Automated content safety checks using a dedicated Python-based classifier server.
+- **⚓ Dockerized**: Fully containerized stack for one-command local orchestration.
 
 ---
 
@@ -24,74 +35,49 @@
 
 | Layer | Technologies |
 | :--- | :--- |
-| **Frontend** | React, Redux Toolkit, Tailwind CSS, Shadcn/UI, Lucide Icons |
-| **Backend** | Node.js, Express.js, Passport.js, JWT, MongoDB |
-| **AI/Moderation**| Python, Flask/FastAPI (Classifier Server) |
-| **Dev Tools** | Vite, PostCSS, ESLint |
+| **Frontend** | React 18, Vite, Redux Toolkit, Tailwind CSS, Lucide React, Framer Motion |
+| **Backend** | Node.js, Express, MongoDB (Mongoose), Socket.io, Passport.js, JWT |
+| **Moderation**| Python (Flask/FastAPI), scikit-learn, Perspective API |
+| **Infrastructure**| Docker & Docker Compose, GitHub Actions (CI/CD) |
 
 ---
 
-## 📁 Project Structure
+## 🏗️ Architecture Overview
 
-```bash
-Aura/
-├── client/             # React + Vite frontend (Aura Client)
-│   ├── src/components  # UI components (Shared + Shadcn)
-│   ├── src/pages       # Route-level components
-│   └── src/redux       # State management
-├── server/             # Node.js + Express backend (Aura Server)
-│   ├── models/         # Database schemas
-│   ├── controllers/    # Business logic
-│   └── middlewares/    # Security & Validation
-├── classifier_server/  # Python-based moderation engine
-└── resources/          # Design assets & static files
+```mermaid
+graph TD
+    User((User)) <--> |React / Socket.io| Client[Aura Client]
+    Client <--> |REST / WebSockets| Server[Aura Server]
+    Server <--> |Mongoose| DB[(MongoDB)]
+    Server <--> |HTTP| Classifier[AI Moderation Server]
+    Server -.-> |SMTP| Email[Email Service]
 ```
 
 ---
 
 ## 🚀 Getting Started
 
-### Prerequisites
+### One-Command Setup (Docker)
+The easiest way to run the entire Aura stack (Frontend, Backend, Database, AI Moderation):
+```bash
+docker-compose up --build
+```
 
-- **Node.js** (v18+)
-- **MongoDB** (Local or Atlas)
-- **Python** (v3.9+ for classifier server)
+### Manual Setup
 
-### Installation
-
-1. **Clone the repository**
+1. **Clone & Install**
    ```bash
    git clone https://github.com/aarogyaojha/mySocialSpace.git
    cd mySocialSpace
    ```
 
-2. **Setup Backend**
-   ```bash
-   cd server
-   npm install
-   # Create .env and add:
-   # PORT=4000
-   # MONGODB_URI=your_db_uri
-   # JWT_SECRET=your_secret
-   ```
+2. **Environment Configuration**
+   Copy `.env.example` to `.env` in both `server/` and `client/` directories and fill in your credentials.
 
-3. **Setup Frontend**
-   ```bash
-   cd ../client
-   npm install
-   ```
-
-4. **Setup Classifier** (Optional but recommended)
-   ```bash
-   cd ../classifier_server
-   pip install -r requirements.txt
-   ```
-
-### Running the App
-
-- **Server**: `npm start` (in `server/`)
-- **Client**: `npm run dev` (in `client/`)
-- **Classifier**: `python classifier_api.py` (in `classifier_server/`)
+3. **Start Components**
+   - **Server**: `npm start` (in `server/`)
+   - **Client**: `npm run dev` (in `client/`)
+   - **Classifier**: `python classifier_api.py` (in `classifier_server/`)
 
 ---
 
