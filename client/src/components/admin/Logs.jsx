@@ -55,17 +55,17 @@ const Logs = () => {
   }
 
   return (
-    <div className="bg-white flex flex-col items-center justify-center mt-3 rounded-md">
+    <div className="bg-card flex flex-col items-center justify-center mt-3 rounded-md border border-border">
       <div className="p-4 shadow-md rounded relative xl:min-w-[1200px] lg:min-w-[1000px] md:min-w-[800px]">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold text-gray-800">
+          <h1 className="text-2xl font-bold text-foreground">
             User Activity Logs
           </h1>
           <CurrentTime />
         </div>
 
-        <div className="flex justify-between items-center mb-4 border-b border-gray-200 pb-2">
-          <div className="text-sm italic text-gray-600">{`Showing ${logs.length} items from the last 7 days`}</div>
+        <div className="flex justify-between items-center mb-4 border-b border-border pb-2">
+          <div className="text-sm italic text-muted-foreground">{`Showing ${logs.length} items from the last 7 days`}</div>
 
           <div className="flex items-center space-x-2">
             <button onClick={handleRefresh}>
@@ -89,12 +89,12 @@ const Logs = () => {
 
         {!loading ? (
           logs.length === 0 ? (
-            <div className="text-gray-500 text-lg">No logs found</div>
+            <div className="text-muted-foreground text-lg">No logs found</div>
           ) : (
             <>
               <div className="h-[430px] relative overflow-auto">
-                <div className="w-full rounded">
-                  <div className="grid grid-cols-5 gap-5 items-center border-b py-2 font-semibold text-gray-800">
+                <div className="w-full rounded bg-card text-card-foreground">
+                  <div className="grid grid-cols-5 gap-5 items-center border-b border-border py-2 font-semibold text-foreground">
                     <p className="text-center">Timestamp</p>
                     <p>Message</p>
                     <p>Email Used</p>
@@ -104,7 +104,7 @@ const Logs = () => {
                   {logs.map((log) => (
                     <div
                       key={log._id}
-                      className="grid grid-cols-5 gap-5 items-center border-b py-2 text-sm text-gray-700"
+                      className="grid grid-cols-5 gap-5 items-center border-b border-border py-2 text-sm text-foreground"
                     >
                       <span className="flex-col justify-center items-center text-center font-mono">
                         <p>{log.relativeTimestamp}</p>
@@ -158,7 +158,7 @@ const Logs = () => {
                 </div>
               </div>
 
-              <div className="flex justify-center text-sm italic text-gray-600 mt-2">
+              <div className="flex justify-center text-sm italic text-muted-foreground mt-2">
                 logs are automatically deleted after 7 days
               </div>
             </>
