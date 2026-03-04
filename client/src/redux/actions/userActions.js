@@ -1,5 +1,6 @@
 import * as api from "../api/userAPI";
 import * as types from "../constants/userConstants";
+import * as authTypes from "../constants/authConstants";
 import { getPostsAction, getSavedPostsAction } from "./postActions";
 
 export const getUserAction = (id) => async (dispatch) => {
@@ -22,6 +23,7 @@ export const getUserAction = (id) => async (dispatch) => {
   }
 };
 
+
 export const updateUserAction = (id, formData) => async (dispatch) => {
   try {
     const { error, data } = await api.updateUser(id, formData);
@@ -30,9 +32,24 @@ export const updateUserAction = (id, formData) => async (dispatch) => {
       throw new Error(error);
     }
 
+    // Sync auth state if profile info changed
+    if (data.user) {
+      // Update localStorage to persist changes
+      const profile = JSON.parse(localStorage.getItem("profile"));
+      if (profile) {
+        profile.user = data.user;
+        localStorage.setItem("profile", JSON.stringify(profile));
+      }
+
+      dispatch({
+        type: authTypes.SET_USER_DATA,
+        payload: data.user,
+      });
+    }
+
     dispatch({
       type: types.GET_USER_SUCCESS,
-      payload: data,
+      payload: data.user,
     });
   } catch (error) {
     dispatch({

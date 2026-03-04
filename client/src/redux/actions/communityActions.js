@@ -317,3 +317,32 @@ export const leaveFetchData = (communityName) => async (dispatch) => {
     });
   }
 };
+
+export const createCommunityAction = (formData, navigate) => async (dispatch) => {
+  try {
+    const { error, data } = await api.createCommunity(formData);
+    if (error) {
+      throw new Error(error);
+    }
+    dispatch({
+      type: types.CREATE_COMMUNITY_SUCCESS,
+      payload: data,
+    });
+    // Refresh the joined communities list
+    await dispatch(getJoinedCommunitiesAction());
+    if (navigate) {
+      navigate(`/community/${data.name}`);
+    }
+    return { success: true, data };
+  } catch (error) {
+    dispatch({
+      type: types.CREATE_COMMUNITY_FAIL,
+      payload: error.message,
+    });
+    return { success: false, error: error.message };
+  }
+};
+
+export const clearCommunityError = () => (dispatch) => {
+  dispatch({ type: types.CLEAR_COMMUNITY_ERROR });
+};

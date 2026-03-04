@@ -166,35 +166,38 @@ export const clearPostsAction = () => async (dispatch) => {
   });
 };
 
-export const getPostsAction = (limit, skip) => async (dispatch) => {
-  try {
-    const { error, data } = await api.getPosts(limit, skip);
+export const getPostsAction =
+  (limit, skip, sort = "new") =>
+  async (dispatch) => {
+    try {
+      const { error, data } = await api.getPosts(limit, skip, sort);
 
-    if (error) {
-      throw new Error(error);
+      if (error) {
+        throw new Error(error);
+      }
+
+      dispatch({
+        type: types.GET_POSTS_SUCCESS,
+        payload: {
+          page: skip / limit + 1,
+          posts: data.formattedPosts,
+          totalPosts: data.totalPosts,
+          sort,
+        },
+        meta: {
+          requiresAuth: true,
+        },
+      });
+    } catch (error) {
+      dispatch({
+        type: types.GET_POSTS_FAIL,
+        payload: error,
+        meta: {
+          requiresAuth: true,
+        },
+      });
     }
-
-    dispatch({
-      type: types.GET_POSTS_SUCCESS,
-      payload: {
-        page: skip / limit + 1,
-        posts: data.formattedPosts,
-        totalPosts: data.totalPosts,
-      },
-      meta: {
-        requiresAuth: true,
-      },
-    });
-  } catch (error) {
-    dispatch({
-      type: types.GET_POSTS_FAIL,
-      payload: error,
-      meta: {
-        requiresAuth: true,
-      },
-    });
-  }
-};
+  };
 
 export const getOwnPostAction = (id) => async (dispatch) => {
   try {
@@ -223,9 +226,15 @@ export const getOwnPostAction = (id) => async (dispatch) => {
 };
 
 export const getComPostsAction =
-  (communityId, limit, skip) => async (dispatch) => {
+  (communityId, limit, skip, sort = "new") =>
+  async (dispatch) => {
     try {
-      const { error, data } = await api.getComPosts(communityId, limit, skip);
+      const { error, data } = await api.getComPosts(
+        communityId,
+        limit,
+        skip,
+        sort
+      );
 
       if (error) {
         throw new Error(error);
@@ -237,6 +246,7 @@ export const getComPostsAction =
           page: skip / limit + 1,
           posts: data.formattedPosts,
           totalCommunityPosts: data.totalCommunityPosts,
+          sort,
         },
         meta: {
           requiresAuth: true,
@@ -498,28 +508,182 @@ export const decreaseSavedByCount = (postId) => async (dispatch) => {
   });
 };
 
-export const getPublicPostsAction = (publicUserId) => async (dispatch) => {
+export const dislikePostAction = (id) => async (dispatch) => {
   try {
-    const { error, data } = await api.getPublicPosts(publicUserId);
-
-    if (error) {
-      throw new Error(error);
-    }
-
+    const { error, data } = await api.dislikePost(id);
+    if (error) throw new Error(error);
     dispatch({
-      type: types.GET_PUBLIC_POSTS_SUCCESS,
+      type: types.DISLIKE_POST_SUCCESS,
       payload: data,
-      meta: {
-        requiresAuth: true,
-      },
+      meta: { requiresAuth: true },
     });
   } catch (error) {
     dispatch({
-      type: types.GET_PUBLIC_POSTS_FAIL,
+      type: types.DISLIKE_POST_FAIL,
       payload: error.message,
-      meta: {
-        requiresAuth: true,
-      },
+      meta: { requiresAuth: true },
+    });
+  }
+};
+
+export const undislikePostAction = (id) => async (dispatch) => {
+  try {
+    const { error, data } = await api.undislikePost(id);
+    if (error) throw new Error(error);
+    dispatch({
+      type: types.UNDISLIKE_POST_SUCCESS,
+      payload: data,
+      meta: { requiresAuth: true },
+    });
+  } catch (error) {
+    dispatch({
+      type: types.UNDISLIKE_POST_FAIL,
+      payload: error.message,
+      meta: { requiresAuth: true },
+    });
+  }
+};
+
+export const pinPostAction = (id) => async (dispatch) => {
+  try {
+    const { error, data } = await api.pinPost(id);
+    if (error) throw new Error(error);
+    dispatch({
+      type: types.PIN_POST_SUCCESS,
+      payload: data,
+      meta: { requiresAuth: true },
+    });
+  } catch (error) {
+    dispatch({
+      type: types.PIN_POST_FAIL,
+      payload: error.message,
+      meta: { requiresAuth: true },
+    });
+  }
+};
+
+export const unpinPostAction = (id) => async (dispatch) => {
+  try {
+    const { error, data } = await api.unpinPost(id);
+    if (error) throw new Error(error);
+    dispatch({
+      type: types.UNPIN_POST_SUCCESS,
+      payload: data,
+      meta: { requiresAuth: true },
+    });
+  } catch (error) {
+    dispatch({
+      type: types.UNPIN_POST_FAIL,
+      payload: error.message,
+      meta: { requiresAuth: true },
+    });
+  }
+};
+
+export const lockPostAction = (id) => async (dispatch) => {
+  try {
+    const { error, data } = await api.lockPost(id);
+    if (error) throw new Error(error);
+    dispatch({
+      type: types.LOCK_POST_SUCCESS,
+      payload: data,
+      meta: { requiresAuth: true },
+    });
+  } catch (error) {
+    dispatch({
+      type: types.LOCK_POST_FAIL,
+      payload: error.message,
+      meta: { requiresAuth: true },
+    });
+  }
+};
+
+export const unlockPostAction = (id) => async (dispatch) => {
+  try {
+    const { error, data } = await api.unlockPost(id);
+    if (error) throw new Error(error);
+    dispatch({
+      type: types.UNLOCK_POST_SUCCESS,
+      payload: data,
+      meta: { requiresAuth: true },
+    });
+  } catch (error) {
+    dispatch({
+      type: types.UNLOCK_POST_FAIL,
+      payload: error.message,
+      meta: { requiresAuth: true },
+    });
+  }
+};
+
+export const updateFlairAction = (id, flair) => async (dispatch) => {
+  try {
+    const { error, data } = await api.updateFlair(id, flair);
+    if (error) throw new Error(error);
+    dispatch({
+      type: types.UPDATE_FLAIR_SUCCESS,
+      payload: data,
+      meta: { requiresAuth: true },
+    });
+  } catch (error) {
+    dispatch({
+      type: types.UPDATE_FLAIR_FAIL,
+      payload: error.message,
+      meta: { requiresAuth: true },
+    });
+  }
+};
+
+export const reportContentAction = (id, reportData) => async (dispatch) => {
+  try {
+    const { error, data } = await api.reportContent(id, reportData);
+    if (error) throw new Error(error);
+    dispatch({
+      type: types.REPORT_CONTENT_SUCCESS,
+      payload: data,
+      meta: { requiresAuth: true },
+    });
+  } catch (error) {
+    dispatch({
+      type: types.REPORT_CONTENT_FAIL,
+      payload: error.message,
+      meta: { requiresAuth: true },
+    });
+  }
+};
+
+export const likeCommentAction = (postId, commentId) => async (dispatch) => {
+  try {
+    const { error, data } = await api.likeComment(postId, commentId);
+    if (error) throw new Error(error);
+    dispatch({
+      type: types.LIKE_COMMENT_SUCCESS,
+      payload: { postId, data },
+      meta: { requiresAuth: true },
+    });
+  } catch (error) {
+    dispatch({
+      type: types.LIKE_COMMENT_FAIL,
+      payload: error.message,
+      meta: { requiresAuth: true },
+    });
+  }
+};
+
+export const dislikeCommentAction = (postId, commentId) => async (dispatch) => {
+  try {
+    const { error, data } = await api.dislikeComment(postId, commentId);
+    if (error) throw new Error(error);
+    dispatch({
+      type: types.DISLIKE_COMMENT_SUCCESS,
+      payload: { postId, data },
+      meta: { requiresAuth: true },
+    });
+  } catch (error) {
+    dispatch({
+      type: types.DISLIKE_COMMENT_FAIL,
+      payload: error.message,
+      meta: { requiresAuth: true },
     });
   }
 };

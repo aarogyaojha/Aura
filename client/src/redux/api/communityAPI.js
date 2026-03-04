@@ -9,6 +9,15 @@ export const getCommunity = async (communityName) => {
   }
 };
 
+export const createCommunity = async (formData) => {
+  try {
+    const { data } = await COMMUNITY_API.post(`/communities/${formData.name}`, formData);
+    return { error: null, data };
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
 export const getJoinedCommunities = async () => {
   try {
     const { data } = await COMMUNITY_API.get("/communities/member");

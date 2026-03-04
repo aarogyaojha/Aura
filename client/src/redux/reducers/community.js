@@ -120,6 +120,32 @@ const communityReducer = (state = initialState, action) => {
         communityError: payload,
       };
 
+    case types.BAN_USER_FAIL:
+    case types.UNBAN_USER_FAIL:
+      return {
+        ...state,
+        communityError: action.payload,
+      };
+
+    case types.CREATE_COMMUNITY_SUCCESS:
+      return {
+        ...state,
+        joinedCommunities: [...state.joinedCommunities, action.payload],
+        communityError: null,
+      };
+
+    case types.CREATE_COMMUNITY_FAIL:
+      return {
+        ...state,
+        communityError: action.payload,
+      };
+
+    case types.CLEAR_COMMUNITY_ERROR:
+      return {
+        ...state,
+        communityError: null,
+      };
+
     default:
       return state;
   }

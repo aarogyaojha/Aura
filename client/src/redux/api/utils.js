@@ -31,12 +31,17 @@ export const COMMUNITY_API = axios.create({
   baseURL: BASE_URL,
 });
 
+export const NOTIFICATION_API = axios.create({
+  baseURL: `${BASE_URL}/notifications`,
+});
+
 API.interceptors.request.use(authInterceptor);
 ADMIN_API.interceptors.request.use(adminAuthInterceptor);
 COMMUNITY_API.interceptors.request.use((req) => {
   req.headers["Content-Type"] = "application/json";
   return authInterceptor(req);
 });
+NOTIFICATION_API.interceptors.request.use(authInterceptor);
 
 export const handleApiError = async (error) => {
   try {

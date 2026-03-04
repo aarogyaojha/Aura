@@ -1,5 +1,5 @@
 import * as types from "../constants/postConstants";
-import { LOGOUT } from "../constants/authConstants";
+import { LOGOUT, SET_USER_DATA } from "../constants/authConstants";
 
 const initialState = {
   post: null,
@@ -16,6 +16,8 @@ const initialState = {
   confirmationToken: null,
   isPostInappropriate: false,
   isCommentInappropriate: false,
+  currentSort: "new",
+  communitySort: "new",
 };
 
 const postsReducer = (state = initialState, action) => {
@@ -40,6 +42,32 @@ const postsReducer = (state = initialState, action) => {
         confirmationToken: null,
         isPostInappropriate: false,
         isCommentInappropriate: false,
+      };
+
+    case SET_USER_DATA:
+      if (!payload) return state;
+      const updatePostUser = (post) => {
+        if (post.user && (post.user._id === payload._id || post.user === payload._id)) {
+          return {
+            ...post,
+            user: {
+              ...post.user,
+              name: payload.name,
+              avatar: payload.avatar,
+            }
+          };
+        }
+        return post;
+      };
+      return {
+        ...state,
+        posts: state.posts.map(updatePostUser),
+        publicPosts: state.publicPosts.map(updatePostUser),
+        ownPost: state.ownPost ? updatePostUser(state.ownPost) : null,
+        savedPosts: state.savedPosts.map(updatePostUser),
+        communityPosts: state.communityPosts.map(updatePostUser),
+        followingUsersPosts: state.followingUsersPosts.map(updatePostUser),
+        post: state.post ? updatePostUser(state.post) : null,
       };
 
     case types.CREATE_POST_SUCCESS:
@@ -133,12 +161,38 @@ const postsReducer = (state = initialState, action) => {
         totalCommunityPosts: 0,
       };
 
+    case types.LIKE_POST_SUCCESS:
+    case types.UNLIKE_POST_SUCCESS:
+    case types.DISLIKE_POST_SUCCESS:
+    case types.UNDISLIKE_POST_SUCCESS:
+    case types.PIN_POST_SUCCESS:
+    case types.UNPIN_POST_SUCCESS:
+    case types.LOCK_POST_SUCCESS:
+    case types.UNLOCK_POST_SUCCESS:
+    case types.UPDATE_FLAIR_SUCCESS:
+      return updatePostInState(state, payload);
+
+    case types.LIKE_POST_FAIL:
+    case types.UNLIKE_POST_FAIL:
+    case types.DISLIKE_POST_FAIL:
+    case types.UNDISLIKE_POST_FAIL:
+      return {
+        ...state,
+        postError: payload,
+      };
+
+    case types.LIKE_COMMENT_SUCCESS:
+    case types.DISLIKE_COMMENT_SUCCESS:
+      // payload is { postId, data: updatedPost }
+      return updatePostInState(state, payload.data);
+
     case types.GET_POSTS_SUCCESS:
       if (payload.page === 1) {
         return {
           ...state,
           posts: payload ? payload.posts : [],
           totalPosts: payload ? payload.totalPosts : 0,
+          currentSort: payload.sort || state.currentSort,
           postError: null,
         };
       } else {
@@ -150,15 +204,10 @@ const postsReducer = (state = initialState, action) => {
           ...state,
           posts: [...state.posts, ...newPosts],
           totalPosts: payload ? payload.totalPosts : 0,
+          currentSort: payload.sort || state.currentSort,
           postError: null,
         };
       }
-
-    case types.GET_POSTS_FAIL:
-      return {
-        ...state,
-        postError: payload,
-      };
 
     case types.GET_COMMUNITY_POSTS_SUCCESS:
       if (payload.page === 1) {
@@ -166,6 +215,7 @@ const postsReducer = (state = initialState, action) => {
           ...state,
           communityPosts: payload ? payload.posts : [],
           totalCommunityPosts: payload ? payload.totalCommunityPosts : 0,
+          communitySort: payload.sort || state.communitySort,
           postError: null,
         };
       } else {
@@ -176,97 +226,10 @@ const postsReducer = (state = initialState, action) => {
             ...(payload ? payload.posts : []),
           ],
           totalCommunityPosts: payload ? payload.totalCommunityPosts : 0,
+          communitySort: payload.sort || state.communitySort,
           postError: null,
         };
       }
-
-    case types.GET_COMMUNITY_POSTS_FAIL:
-      return {
-        ...state,
-        postError: payload,
-      };
-
-    case types.GET_FOLLOWING_USERS_POSTS_SUCCESS:
-      return {
-        ...state,
-        followingUsersPosts: payload ? payload : [],
-        postError: null,
-      };
-
-    case types.GET_FOLLOWING_USERS_POSTS_FAIL:
-      return {
-        ...state,
-        postError: payload,
-      };
-
-    case types.DELETE_POST_SUCCESS:
-      return {
-        ...state,
-        posts: state.posts.filter((post) => post._id !== payload),
-        communityPosts: state.communityPosts.filter(
-          (post) => post._id !== payload
-        ),
-        postError: null,
-        totalPosts: state.totalPosts - 1,
-        totalCommunityPosts: state.totalCommunityPosts - 1,
-      };
-    case types.DELETE_POST_FAIL:
-      return {
-        ...state,
-        postError: payload,
-      };
-
-    case types.UPDATE_POST_SUCCESS:
-      return {
-        ...state,
-        posts: state.posts.map((post) =>
-          post._id === payload._id ? payload : post
-        ),
-        communityPosts: state.communityPosts.map((post) =>
-          post._id === payload._id ? payload : post
-        ),
-        postError: null,
-      };
-    case types.UPDATE_POST_FAIL:
-      return {
-        ...state,
-        postError: payload,
-      };
-
-    case types.ADD_COMMENT_FAIL:
-      return {
-        ...state,
-        commentError: payload,
-      };
-
-    case types.ADD_COMMENT_FAIL_INAPPROPRIATE:
-      return {
-        ...state,
-        isCommentInappropriate: true,
-      };
-
-    case types.CLEAR_COMMENT_FAIL:
-      return {
-        ...state,
-        commentError: null,
-        isCommentInappropriate: false,
-      };
-
-    case types.LIKE_POST_SUCCESS:
-    case types.UNLIKE_POST_SUCCESS:
-      const { posts, communityPosts } = updatePostLike(state, payload);
-      return {
-        ...state,
-        posts,
-        communityPosts,
-        postError: null,
-      };
-    case types.LIKE_POST_FAIL:
-    case types.UNLIKE_POST_FAIL:
-      return {
-        ...state,
-        postError: payload,
-      };
 
     case types.SAVE_POST_SUCCESS:
     case types.UNSAVE_POST_SUCCESS:
@@ -276,65 +239,26 @@ const postsReducer = (state = initialState, action) => {
         savedPosts: payload ? payload : [],
         postError: null,
       };
-    case types.SAVE_POST_FAIL:
-    case types.UNSAVE_POST_FAIL:
-    case types.GET_SAVED_POSTS_FAIL:
-      return {
-        ...state,
-        postError: payload,
-      };
 
-    case types.GET_PUBLIC_POSTS_SUCCESS:
-      return {
-        ...state,
-        publicPosts: payload ? payload : [],
-        postError: null,
-      };
-    case types.GET_PUBLIC_POSTS_FAIL:
-      return {
-        ...state,
-        postError: payload,
-      };
-    case types.INCREASE_SAVED_BY_COUNT:
-      return {
-        ...state,
-        post:
-          state.post && state.post._id === payload
-            ? {
-                ...state.post,
-                savedByCount: state.post.savedByCount + 1,
-              }
-            : state.post,
-
-        postError: null,
-      };
-    case types.DECREASE_SAVED_BY_COUNT:
-      return {
-        ...state,
-        post:
-          state.post && state.post._id === payload
-            ? {
-                ...state.post,
-                savedByCount: state.post.savedByCount - 1,
-              }
-            : state.post,
-
-        postError: null,
-      };
-
+    case types.DEFAULT:
     default:
       return state;
   }
 };
 
-const updatePostLike = (state, updatedPost) => {
-  const posts = state.posts.map((post) =>
-    post._id === updatedPost._id ? updatedPost : post
-  );
-  const communityPosts = state.communityPosts.map((post) =>
-    post._id === updatedPost._id ? updatedPost : post
-  );
-  return { posts, communityPosts };
+const updatePostInState = (state, updatedPost) => {
+  const update = (post) => (post._id === updatedPost._id ? updatedPost : post);
+  return {
+    ...state,
+    posts: state.posts.map(update),
+    communityPosts: state.communityPosts.map(update),
+    publicPosts: state.publicPosts.map(update),
+    savedPosts: state.savedPosts.map(update),
+    followingUsersPosts: state.followingUsersPosts.map(update),
+    post: state.post && state.post._id === updatedPost._id ? updatedPost : state.post,
+    ownPost: state.ownPost && state.ownPost._id === updatedPost._id ? updatedPost : state.ownPost,
+    postError: null,
+  };
 };
 
 export default postsReducer;

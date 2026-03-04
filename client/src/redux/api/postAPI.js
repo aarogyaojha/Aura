@@ -51,19 +51,26 @@ export const getPost = async (id) => {
   }
 };
 
-export const getPosts = async (limit = 10, skip = 0) => {
+export const getPosts = async (limit = 10, skip = 0, sort = "new") => {
   try {
-    const { data } = await API.get(`/posts?limit=${limit}&skip=${skip}`);
+    const { data } = await API.get(
+      `/posts?limit=${limit}&skip=${skip}&sort=${sort}`
+    );
     return { error: null, data };
   } catch (error) {
     return handleApiError(error);
   }
 };
 
-export const getComPosts = async (communityId, limit = 10, skip = 0) => {
+export const getComPosts = async (
+  communityId,
+  limit = 10,
+  skip = 0,
+  sort = "new"
+) => {
   try {
     const { data } = await API.get(
-      `/posts/community/${communityId}?limit=${limit}&skip=${skip}`
+      `/posts/community/${communityId}?limit=${limit}&skip=${skip}&sort=${sort}`
     );
     return { error: null, data };
   } catch (error) {
@@ -98,10 +105,100 @@ export const unlikePost = async (id) => {
   }
 };
 
+export const dislikePost = async (id) => {
+  try {
+    const { data } = await API.patch(`/posts/${id}/dislike`);
+    return { error: null, data };
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+export const undislikePost = async (id) => {
+  try {
+    const { data } = await API.patch(`/posts/${id}/undislike`);
+    return { error: null, data };
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+export const pinPost = async (id) => {
+  try {
+    const { data } = await API.patch(`/posts/${id}/pin`);
+    return { error: null, data };
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+export const unpinPost = async (id) => {
+  try {
+    const { data } = await API.patch(`/posts/${id}/unpin`);
+    return { error: null, data };
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+export const lockPost = async (id) => {
+  try {
+    const { data } = await API.patch(`/posts/${id}/lock`);
+    return { error: null, data };
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+export const unlockPost = async (id) => {
+  try {
+    const { data } = await API.patch(`/posts/${id}/unlock`);
+    return { error: null, data };
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+export const updateFlair = async (id, flair) => {
+  try {
+    const { data } = await API.patch(`/posts/${id}/flair`, { flair });
+    return { error: null, data };
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+export const reportContent = async (id, reportData) => {
+  try {
+    const { data } = await API.post(`/posts/${id}/report`, reportData);
+    return { error: null, data };
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+export const likeComment = async (postId, commentId) => {
+  try {
+    const { data } = await API.patch(`/posts/${postId}/comment/${commentId}/like`);
+    return { error: null, data };
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+export const dislikeComment = async (postId, commentId) => {
+  try {
+    const { data } = await API.patch(`/posts/${postId}/comment/${commentId}/dislike`);
+    return { error: null, data };
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
 export const addComment = async (id, newComment) => {
   try {
-    await API.post(`/posts/${id}/comment`, newComment);
-    return { error: null };
+    const { data } = await API.post(`/posts/${id}/comment`, newComment);
+    return { error: null, data };
   } catch (error) {
     if (error.response?.status === 403) {
       const { type } = error.response.data || {};
@@ -112,6 +209,7 @@ export const addComment = async (id, newComment) => {
     return handleApiError(error);
   }
 };
+
 
 export const savePost = async (id) => {
   try {
