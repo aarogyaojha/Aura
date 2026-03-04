@@ -87,7 +87,7 @@ const Rightbar = () => {
                 to="/communities"
               >
                 See all
-                <p className="absolute -top-2 -right-4 text-white text-xs bg-primary w-4 h-4 rounded-full flex justify-center items-center">
+                <p className="absolute -top-2 -right-4 text-primary-foreground text-xs bg-primary w-4 h-4 rounded-full flex justify-center items-center">
                   {" "}
                   {remainingCount}
                 </p>
@@ -104,7 +104,7 @@ const Rightbar = () => {
             {visibleCommunities?.map((community) => (
               <li
                 key={community._id}
-                className="flex items-center justify-between bg-white px-2 py-1 rounded-md"
+                className="flex items-center justify-between bg-white dark:bg-background px-2 py-1 rounded-md border border-border"
               >
                 <div className="flex items-center">
                   <img
@@ -157,7 +157,7 @@ const Rightbar = () => {
           recommendedUsers.map((user) => (
             <li
               key={user._id}
-              className="flex justify-between items-center gap-5 bg-white shadow-2xl shadow-[#f2f5fc]  border border-slate-100 px-2 py-1 rounded-lg"
+              className="flex justify-between items-center gap-5 bg-white dark:bg-background shadow-sm border border-border px-2 py-1 rounded-lg"
             >
               <div className="flex justify-content-between items-center gap-1">
                 <img
