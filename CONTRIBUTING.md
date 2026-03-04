@@ -36,7 +36,7 @@ By participating in this project, you agree to abide by our Code of Conduct (be 
 - `docs/doc-update`
 
 ## 👋 Questions?
-Feel free to reach out to the maintainer at `neaz6160@gmail.com`.
+Feel free to reach out to the maintainer at `arogyaojha251@gmail.com`.
 
 ---
 
