@@ -73,7 +73,7 @@ const Leftbar = ({ showLeftbar }) => {
             </Link>
           )}
 
-          <hr className="w-full my-4 border-gray-300" />
+          <hr className="w-full my-4 border-border" />
 
           {communityLinks && communityLinks.length > 0 ? (
             <div className="w-full">
@@ -97,7 +97,7 @@ const Leftbar = ({ showLeftbar }) => {
                     to="/my-communities"
                   >
                     See all
-                    <p className="absolute -top-2 -right-4 text-white text-xs bg-primary w-4 h-4 rounded-full flex justify-center items-center">
+                    <p className="absolute -top-2 -right-4 text-primary-foreground text-xs bg-primary w-4 h-4 rounded-full flex justify-center items-center">
                       {" "}
                       {joinedCommunities?.length || 0}
                     </p>
@@ -108,7 +108,7 @@ const Leftbar = ({ showLeftbar }) => {
                 {communityLinks.map((communityLink) => (
                   <li key={communityLink.href}>
                     <Link
-                      className="flex items-center hover:text-primary text-gray-600 font-medium gap-2 py-1"
+                      className="flex items-center hover:text-primary text-gray-600 dark:text-gray-300 font-medium gap-2 py-1"
                       to={communityLink.href}
                     >
                       {communityLink.label}
@@ -137,7 +137,7 @@ const Leftbar = ({ showLeftbar }) => {
           )}
           {user && user.role === "general" && (
             <div className="md:hidden">
-              <hr className="w-full my-4 border-gray-300" />
+              <hr className="w-full my-4 border-border" />
               <div className="flex justify-center gap-1 items-center">
                 <GiTeamIdea />
                 <Link to="/communities" className="text-primary font-medium">
