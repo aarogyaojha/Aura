@@ -63,8 +63,8 @@ const Settings = () => {
   }
 
   return (
-    <div className="p-5 w-full border rounded-md bg-white mt-3">
-      <h2 className="font-semibold mb-4 border-b pb-2 text-center text-gray-700">
+    <div className="p-5 w-full border border-border rounded-md bg-card text-card-foreground mt-3">
+      <h2 className="font-semibold mb-4 border-b border-border pb-2 text-center text-foreground">
         Service Preferences
       </h2>
 
@@ -78,7 +78,7 @@ const Settings = () => {
         <div>Use Perspective API for content moderation</div>
         <div className="ml-auto">
           <input
-            className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            className="w-5 h-5 text-primary bg-background border-border rounded focus:ring-primary focus:ring-2"
             type="checkbox"
             checked={usePerspectiveAPI}
             onChange={(e) => setUsePerspectiveAPI(e.target.checked)}
@@ -90,7 +90,7 @@ const Settings = () => {
         <div>Category filtering service provider</div>
         <div className="ml-auto">
           <select
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+            className="bg-background border border-border text-foreground text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5"
             value={categoryFilteringServiceProvider}
             onChange={(e) =>
               setCategoryFilteringServiceProvider(e.target.value)
@@ -109,7 +109,7 @@ const Settings = () => {
         <div>Category filtering request timeout (ms)</div>
         <div className="ml-auto">
           <input
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+            className="bg-background border border-border text-foreground text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5"
             type="number"
             value={categoryFilteringRequestTimeout}
             min={0}
