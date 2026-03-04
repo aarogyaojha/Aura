@@ -1,13 +1,10 @@
 # 🌟 Aura — Social Experience Reimagined
 
-[![CI/CD](https://github.com/aarogyaojha/mySocialSpace/actions/workflows/ci.yml/badge.svg)](https://github.com/aarogyaojha/mySocialSpace/actions)
+[![CI/CD](https://github.com/aarogyaojha/Aura/actions/workflows/ci.yml/badge.svg)](https://github.com/aarogyaojha/Aura/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
 **Aura** is a premium, full-stack social networking platform designed for high-end engagement. Inspired by Reddit, it features a robust MERN architecture, real-time interactions, and a "WOW" UI/UX with dark mode and nested discussions.
-
-> [!IMPORTANT]
-> This project was formerly known as `mySocialSpace`. It has been rebranded to **Aura** with a full technical overhaul, Reddit-style features, and a premium modern aesthetic.
 
 ---
 
@@ -67,8 +64,8 @@ docker-compose up --build
 
 1. **Clone & Install**
    ```bash
-   git clone https://github.com/aarogyaojha/mySocialSpace.git
-   cd mySocialSpace
+   git clone https://github.com/aarogyaojha/Aura.git
+   cd Aura
    ```
 
 2. **Environment Configuration**

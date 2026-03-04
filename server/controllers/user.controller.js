@@ -274,7 +274,7 @@ const getUser = async (req, res, next) => {
 /**
  * Adds a new user to the database with the given name, email, password, and avatar.
  *
- * @description If the email domain of the user's email is "mod.mySocialSpace.com", the user will be
+ * @description If the email domain of the user's email is "mod.aura.com", the user will be
  * assigned the role of "moderator" by default, but not necessarily as a moderator of any community.
  * Otherwise, the user will be assigned the role of "general" user.
  *
@@ -299,7 +299,7 @@ const addUser = async (req, res, next) => {
     : defaultAvatar;
 
   const emailDomain = req.body.email.split("@")[1];
-  const role = emailDomain === "mod.mySocialSpace.com" ? "moderator" : "general";
+  const role = emailDomain === "mod.aura.com" ? "moderator" : "general";
 
   newUser = new User({
     name: req.body.name,
