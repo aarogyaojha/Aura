@@ -19,7 +19,6 @@ const initialState = {
   currentSort: "new",
   communitySort: "new",
 };
-
 const postsReducer = (state = initialState, action) => {
   const { type, payload } = action;
 
@@ -231,6 +230,13 @@ const postsReducer = (state = initialState, action) => {
         };
       }
 
+    case types.GET_PUBLIC_POSTS_SUCCESS:
+      return {
+        ...state,
+        publicPosts: payload ? payload : [],
+        postError: null,
+      };
+
     case types.SAVE_POST_SUCCESS:
     case types.UNSAVE_POST_SUCCESS:
     case types.GET_SAVED_POSTS_SUCCESS:
@@ -240,7 +246,6 @@ const postsReducer = (state = initialState, action) => {
         postError: null,
       };
 
-    case types.DEFAULT:
     default:
       return state;
   }
