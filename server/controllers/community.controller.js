@@ -1,5 +1,7 @@
 const Community = require("../models/community.model");
 const Rule = require("../models/rule.model");
+const Notification = require("../models/notification.model");
+const { sendBulkNotifications } = require("../utils/notificationHelper");
 const User = require("../models/user.model");
 const Report = require("../models/report.model");
 const dayjs = require("dayjs");
@@ -34,11 +36,28 @@ const getCommunity = async (req, res) => {
 
 const createCommunity = async (req, res) => {
   try {
-    const communities = req.body;
-    const savedCommunities = await Community.insertMany(communities);
-    res.status(201).json(savedCommunities);
+    const { name, description, banner } = req.body;
+    const userId = req.userId;
+
+    const existingCommunity = await Community.findOne({
+      name: { $regex: new RegExp(`^${name}$`, "i") },
+    });
+    if (existingCommunity) {
+      return res.status(400).json({ message: "Community name already exists" });
+    }
+
+    const newCommunity = new Community({
+      name,
+      description,
+      banner: banner || "https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=2070",
+      moderators: [userId],
+      members: [userId],
+    });
+
+    const savedCommunity = await newCommunity.save();
+    res.status(201).json(savedCommunity);
   } catch (error) {
-    res.status(409).json({
+    res.status(500).json({
       message: "Error creating community",
     });
   }
@@ -154,6 +173,17 @@ const joinCommunity = async (req, res) => {
         new: true,
       }
     );
+
+    // Notify moderators about the new member
+    if (community && community.moderators.length > 0) {
+      const notifications = community.moderators.map((modId) => ({
+        recipient: modId,
+        sender: req.userId,
+        type: "community_join",
+        community: community._id,
+      }));
+      await sendBulkNotifications(notifications);
+    }
 
     res.status(200).json(community);
   } catch (error) {

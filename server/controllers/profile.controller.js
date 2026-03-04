@@ -2,6 +2,8 @@ const User = require("../models/user.model");
 const Relationship = require("../models/relationship.model");
 const Post = require("../models/post.model");
 const Community = require("../models/community.model");
+const Notification = require("../models/notification.model");
+const { createAndSendNotification } = require("../utils/notificationHelper");
 const dayjs = require("dayjs");
 const duration = require("dayjs/plugin/duration");
 const mongoose = require("mongoose");
@@ -197,6 +199,13 @@ const followUser = async (req, res) => {
     ]);
 
     await Relationship.create({ follower: followerId, following: followingId });
+
+    // Create notification for the user being followed
+    await createAndSendNotification({
+      recipient: followingId,
+      sender: followerId,
+      type: "follow",
+    });
 
     res.status(200).json({
       message: "User followed successfully",

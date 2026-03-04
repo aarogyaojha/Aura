@@ -441,8 +441,16 @@ const updateInfo = async (req, res) => {
       });
     }
 
-    const { location, interests, bio } = req.body;
+    const { name, location, interests, bio } = req.body;
 
+    if (req.files && req.files.length > 0) {
+      const fileUrl = `${req.protocol}://${req.get("host")}/assets/userAvatars/${
+        req.files[0].filename
+      }`;
+      user.avatar = fileUrl;
+    }
+
+    if (name) user.name = name;
     user.location = location;
     user.interests = interests;
     user.bio = bio;
@@ -451,6 +459,16 @@ const updateInfo = async (req, res) => {
 
     res.status(200).json({
       message: "User info updated successfully",
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        avatar: user.avatar,
+        bio: user.bio,
+        location: user.location,
+        interests: user.interests,
+      },
     });
   } catch (err) {
     res.status(500).json({
