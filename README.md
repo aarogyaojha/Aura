@@ -1,100 +1,86 @@
-# 🌟 Aura — Social Experience Reimagined
+# Aura
 
-[![CI/CD](https://github.com/aarogyaojha/Aura/actions/workflows/ci.yml/badge.svg)](https://github.com/aarogyaojha/Aura/actions)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
-
-**Aura** is a premium, full-stack social networking platform designed for high-end engagement. Inspired by Reddit, it features a robust MERN architecture, real-time interactions, and a "WOW" UI/UX with dark mode and nested discussions.
+A full-stack anonymous social platform with AI-powered content moderation. Built on the MERN stack with a multi-service Docker Compose architecture — the ML classifier runs as its own independent service, not embedded in the main backend.
 
 ---
 
-## ✨ Key Features
+## Architecture
 
-### 🗳️ Reddit-Style Engagement
-- **Advanced Voting**: Upvote/downvote system with optimistic UI and color-coded score tracking.
-- **Threaded Discussions**: Infinite recursive comment nesting with visual thread lines and collapsible branches.
-- **Smart Sorting**: Home and Community feeds with **Hot**, **New**, **Top**, and **Rising** algorithms.
+Three independently deployable services:
 
-### 🎨 Premium UI/UX
-- **🌓 Dark Mode**: Persistent theme support with smooth transitions and system preference detection.
-- **� Markdown Support**: Full GFM (GitHub Flavored Markdown) rendering for posts and comments.
-- **⚡ Shimmer Skeletons**: Content-aware loading states for a seamless perception of speed.
-- **🏷️ Badges & Metadata**: NSFW, Pinned, and Locked status indicators with community flairs.
-
-### 🛡️ Security & Scalability
-- **🔐 Context-Aware Auth**: Smart login verification based on IP, Location, and Device metadata.
-- **🤖 AI Moderation**: Automated content safety checks using a dedicated Python-based classifier server.
-- **⚓ Dockerized**: Fully containerized stack for one-command local orchestration.
-
----
-
-## 🛠️ Technology Stack
-
-| Layer | Technologies |
-| :--- | :--- |
-| **Frontend** | React 18, Vite, Redux Toolkit, Tailwind CSS, Lucide React, Framer Motion |
-| **Backend** | Node.js, Express, MongoDB (Mongoose), Socket.io, Passport.js, JWT |
-| **Moderation**| Python (Flask/FastAPI), scikit-learn, Perspective API |
-| **Infrastructure**| Docker & Docker Compose, GitHub Actions (CI/CD) |
-
----
-
-## 🏗️ Architecture Overview
-
-```mermaid
-graph TD
-    User((User)) <--> |React / Socket.io| Client[Aura Client]
-    Client <--> |REST / WebSockets| Server[Aura Server]
-    Server <--> |Mongoose| DB[(MongoDB)]
-    Server <--> |HTTP| Classifier[AI Moderation Server]
-    Server -.-> |SMTP| Email[Email Service]
+```
+┌─────────────────┐     ┌─────────────────┐     ┌──────────────────────┐
+│  React client   │────▶│  Express/Node   │────▶│  Python classifier   │
+│  (Vite + Redux) │     │  + Socket.io    │     │  (Flask + sklearn)   │
+└─────────────────┘     └────────┬────────┘     └──────────────────────┘
+                                 │
+                         ┌───────▼───────┐
+                         │   MongoDB     │
+                         └───────────────┘
 ```
 
+**Why a separate classifier service?** Keeps ML dependencies (Python, scikit-learn, Perspective API) isolated from the Node.js runtime. The classifier can be retrained and redeployed independently without touching the backend. It's also how you'd run this in production — not as a subprocess.
+
+**Context-aware auth** — login verification considers IP, location, and device metadata, not just credentials. Suspicious context (new device + new location) triggers additional verification.
+
+**GitHub Actions CI/CD** — automated build and test pipeline on every push.
+
 ---
 
-## 🚀 Getting Started
+## Features
 
-### One-Command Setup (Docker)
-The easiest way to run the entire Aura stack (Frontend, Backend, Database, AI Moderation):
+- Threaded discussions with infinite recursive comment nesting
+- Upvote/downvote with hot, new, top, and rising feed sorting
+- Real-time interactions via Socket.io
+- AI content moderation — posts are screened by the Python classifier before going live
+- Dark mode with system preference detection
+- Full GitHub Flavored Markdown rendering in posts and comments
+- Community flairs, NSFW/Pinned/Locked post indicators
+
+---
+
+## Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | React 18, Vite, Redux Toolkit, Tailwind CSS, Framer Motion |
+| Backend | Node.js, Express, MongoDB (Mongoose), Socket.io, Passport.js |
+| ML Moderation | Python, Flask, scikit-learn, Perspective API |
+| Infrastructure | Docker Compose, GitHub Actions |
+
+---
+
+## Getting started
+
+**One-command setup (Docker):**
+
 ```bash
+git clone https://github.com/aarogyaojha/Aura.git
+cd Aura
 docker-compose up --build
 ```
 
-### Manual Setup
+This starts all three services — client, server, and classifier — plus MongoDB.
 
-1. **Clone & Install**
-   ```bash
-   git clone https://github.com/aarogyaojha/Aura.git
-   cd Aura
-   ```
+**Manual setup:**
 
-2. **Environment Configuration**
-   Copy `.env.example` to `.env` in both `server/` and `client/` directories and fill in your credentials.
+```bash
+# Clone
+git clone https://github.com/aarogyaojha/Aura.git
+cd Aura
 
-3. **Start Components**
-   - **Server**: `npm start` (in `server/`)
-   - **Client**: `npm run dev` (in `client/`)
-   - **Classifier**: `python classifier_api.py` (in `classifier_server/`)
+# Configure environment
+cp server/.env.example server/.env
+cp client/.env.example client/.env
 
----
-
-## 📄 Documentation
-
-- [Frontend Documentation](client/README.md)
-- [Backend Documentation](server/README.md)
-- [Contributing Guidelines](CONTRIBUTING.md)
-- [License](LICENSE)
+# Start services (each in its own terminal)
+cd server && npm start
+cd client && npm run dev
+cd classifier_server && python classifier_api.py
+```
 
 ---
 
-## � Contributing
+## License
 
-We welcome contributions! Please check our [Contributing Guide](CONTRIBUTING.md) for details on how to get started.
-
----
-
-## ⚖️ License
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
-Developed with ❤️ by **Aarogya Ojha**
+MIT © Aarogya Ojha
